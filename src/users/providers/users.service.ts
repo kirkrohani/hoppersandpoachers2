@@ -1,87 +1,109 @@
-import { GetUsersParamDto } from '../dtos/get-users-param.dto';
 import {
-  BadRequestException,
+  ConflictException,
+  forwardRef,
   Inject,
   Injectable,
   InternalServerErrorException,
-  forwardRef,
+  UnauthorizedException,
 } from '@nestjs/common';
-import { User } from '../user.entity';
-import { Repository } from 'typeorm';
+import { UserRepository } from '.././user.repository';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateUserDto } from '../dtos/create-user.dto';
+import { CreateUserDTO } from '.././dtos/create-user.dto';
+import { ERROR_CODES, ERROR_MESSAGES } from '../../utils/errors';
+
+import { User } from '../user.entity';
+import { GetUserIdParamDTO } from '../dtos/get-user-id-param.dto';
 import { AuthService } from 'src/auth/providers/auth.service';
-import { ConfigService } from '@nestjs/config';
 
 /**
- * Controller class for '/users' API endpoint
+ * Users Service connects to users table and performs business services on users object
  */
 @Injectable()
 export class UsersService {
+  /**
+   * @constructor
+   * @param authService
+   * @param userRepo
+   * @param jwtService
+   */
   constructor(
-    /**
-     * Injecting User repository into UsersService
-     * */
-    @InjectRepository(User)
-    private usersRepository: Repository<User>,
-
-    // Injecting Auth Service
     @Inject(forwardRef(() => AuthService))
-    private readonly authService: AuthService,
-
-    // Injecting ConfigService
-    private readonly configService: ConfigService,
+    private authService: AuthService,
+    @InjectRepository(UserRepository) private userRepo: UserRepository,
   ) {}
 
-  public async createUser(createUserDto: CreateUserDto) {
-    // Check if user with email exists
-    const existingUser = await this.usersRepository.findOne({
-      where: { email: createUserDto.email },
-    });
-
-    /**
-     * Handle exceptions if user exists later
-     * */
-
-    // Try to create a new user
-    // - Handle Exceptions Later
-    let newUser = this.usersRepository.create(createUserDto);
-    newUser = await this.usersRepository.save(newUser);
-
-    // Create the user
-    return newUser;
+  /**
+   * USER SIGN UP - Method to create a new user in database
+   * @param createUserDto
+   * @returns Promise<void>
+   */
+  async userSignUp(createUserDto: CreateUserDTO): Promise<User> {
+    // check for duplicate username, throw error if dupe
+    try {
+      return await this.userRepo.createUser(createUserDto);
+    } catch (error) {
+      if (error.code === ERROR_CODES.DUPLICATE_USERNAME.toString()) {
+        throw new ConflictException(ERROR_MESSAGES.DUPLICATE_USERNAME);
+      } else {
+        throw new InternalServerErrorException();
+      }
+    }
   }
 
   /**
-   * Public method responsible for handling GET request for '/users' endpoint
+   *  USER SIGN IN - method to sign in / authenticate an existing user
+   * @param createUserDto
+   * @returns Promise<{ signedToken: string }>
    */
-  public findAll(
-    getUserParamDto: GetUsersParamDto,
-    limt: number,
-    page: number,
-  ) {
-    // get an environment variable
-    const environment = this.configService.get<string>('S3_BUCKET');
-    console.log(environment);
+  async userSignIn(
+    createUserDto: CreateUserDTO,
+  ): Promise<{ signedToken: string }> {
+    const { username, password } = createUserDto;
+    const user: User = await this.userRepo.findOne({ username });
 
+    if (user) {
+      // const authTokenPayload: iJWTPayload = { username };
+      // const signedToken: string = await this.jwtService.sign(authTokenPayload);
+      // return { signedToken };
+      return null;
+    } else {
+      throw new UnauthorizedException(ERROR_MESSAGES.LOGIN_FAILED);
+    }
+  }
+
+  /**
+   * method which returns and array of all users from database
+   * @param getUserIdParamDto
+   * @param limit
+   * @param page
+   * @returns Promise<any>
+   */
+  async findAll(
+    getUserIdParamDto: GetUserIdParamDTO,
+    limit: number,
+    page: number,
+  ): Promise<any> {
+    // const isAuth = this.authService.isAuthenticated();
     return [
       {
-        firstName: 'John',
-        email: 'john@doe.com',
+        firstname: 'Kirk',
+        lastname: 'Rohani',
+        email: 'krohani@gmail.com',
       },
       {
-        firstName: 'Alice',
-        email: 'alice@doe.com',
+        firstname: 'Kirk2',
+        lastname: 'Rohani2',
+        email: 'krohani2@gmail.com',
       },
     ];
   }
 
   /**
-   * Public method used to find one user using the ID of the user
+   * method which finds one specific user by their user id from the database
+   * @param username
+   * @returns Promise<User>
    */
-  public async findOneById(id: string) {
-    return await this.usersRepository.findOneBy({
-      id,
-    });
+  async findOneById(userId: string): Promise<any> {
+    return await this.userRepo.findUserById(userId);
   }
 }

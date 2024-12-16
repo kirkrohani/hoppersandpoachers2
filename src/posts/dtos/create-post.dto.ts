@@ -13,11 +13,11 @@ import {
   MinLength,
   ValidateNested,
 } from 'class-validator';
-import { PostStatus } from '../enums/postStatus.enum';
-import { CreatePostMetaOptionsDto } from 'src/meta-options/dtos/create-post-meta-options.dto';
-import { Type } from 'class-transformer';
 import { PostType } from '../enums/postType.enum';
-import { ERROR_MESSAGES } from 'src/utils/errors';
+import { PostStatus } from '../enums/postStatus.enum';
+import { ERROR_MESSAGES } from '../../utils/errors';
+import { CreateMetaOptionsDTO } from 'src/meta-options/dtos/create-post-meta-options.dto';
+import { Type } from 'class-transformer';
 
 export class CreatePostDTO {
   /**
@@ -110,7 +110,7 @@ export class CreatePostDTO {
 
   /**
    * Tags
-   * Type: string[]
+   * Type: number[]
    */
   @IsOptional()
   @ApiPropertyOptional()
@@ -137,8 +137,8 @@ export class CreatePostDTO {
     },
   })
   @ValidateNested({ each: true })
-  @Type(() => CreatePostMetaOptionsDto)
-  metaOptions?: CreatePostMetaOptionsDto | null;
+  @Type(() => CreateMetaOptionsDTO)
+  metaOptions?: CreateMetaOptionsDTO | null;
 
   @IsString()
   @IsOptional()

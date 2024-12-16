@@ -9,38 +9,39 @@ import {
   MaxLength,
   MinLength,
 } from 'class-validator';
+import { ERROR_MESSAGES } from 'src/utils/errors';
 
-export class CreateTagDto {
+export class CreateTagDTO {
   @ApiProperty()
   @IsString()
-  @MinLength(3)
   @IsNotEmpty()
+  @MinLength(3)
   @MaxLength(256)
   name: string;
 
-  @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  @Matches(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, {
-    message:
-      'A slug should be all small letters and uses only "-" and without spaces. For example "my-url"',
-  })
+  @ApiProperty()
   @MaxLength(512)
+  @Matches(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, {
+    message: ERROR_MESSAGES.SLUG_MESSAGE,
+  })
   slug: string;
 
-  @ApiPropertyOptional()
-  @IsOptional()
   @IsString()
-  description: string;
-
-  @ApiPropertyOptional()
   @IsOptional()
+  @ApiProperty()
+  @IsString()
+  description?: string;
+
+  @IsOptional()
+  @ApiPropertyOptional()
   @IsJSON()
-  schema: string;
+  schema?: string;
 
-  @ApiPropertyOptional()
   @IsOptional()
+  @ApiPropertyOptional()
   @IsUrl()
   @MaxLength(1024)
-  featuredImage: string;
+  featuredImageUrl?: string;
 }

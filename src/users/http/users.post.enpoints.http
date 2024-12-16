@@ -2,8 +2,9 @@ POST http://localhost:3000/users
 Content-Type: application/json
 
 {
-  "firstName": "John",
-  "lastName": "Doe",
+  "firstname": "John",
+  "lastname": "Doe",
+  "username": "johndoe",
   "email": "john@doe.com",
   "password": "Password123#"
 }

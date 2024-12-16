@@ -1,71 +1,72 @@
 import {
+  Body,
   Controller,
-  Delete,
+  DefaultValuePipe,
   Get,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
-  Put,
   Query,
-  Body,
-  Headers,
-  Ip,
-  ParseIntPipe,
-  DefaultValuePipe,
-  ValidationPipe,
 } from '@nestjs/common';
-import { CreateUserDto } from './dtos/create-user.dto';
-import { GetUsersParamDto } from './dtos/get-users-param.dto';
-import { PatchUserDto } from './dtos/patch-user.dto';
 import { UsersService } from './providers/users.service';
-import { ApiTags, ApiQuery, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { CreateUserDTO } from './dtos/create-user.dto';
+import { GetUserIdParamDTO } from './dtos/get-user-id-param.dto';
+import { UpdateUserDTO } from './dtos/update-user.dto';
+import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { User } from './user.entity';
 
 @Controller('users')
-@ApiTags('Users')
+@ApiTags('USERS')
 export class UsersController {
-  constructor(
-    // Injecting Users Service
-    private readonly usersService: UsersService,
-  ) {}
+  /*
+   Final Endpoint - /users/:id?limit=10&page=1
+   Param id - optional
+   Query limit - integer, default 10
+   Query page - integer, default 1
+  */
+  constructor(private usersService: UsersService) {}
 
   @Get('/:id?')
   @ApiOperation({
-    summary: 'Fetches a list of registered users on the application',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Users fetched successfully based on the query',
+    summary: 'fetches a list of registered users in the application',
   })
   @ApiQuery({
     name: 'limit',
     type: 'number',
     required: false,
-    description: 'The number of entries returned per query',
-    example: 10,
+    description: 'the number of results returned per query',
   })
   @ApiQuery({
     name: 'page',
     type: 'number',
     required: false,
-    description:
-      'The position of the page number that you want the API to return',
-    example: 1,
+    description: 'the page number that is to be loaded',
   })
-  public getUsers(
-    @Param() getUserParamDto: GetUsersParamDto,
-    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
-    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
-  ) {
-    return this.usersService.findAll(getUserParamDto, limit, page);
+  getUsers(
+    @Param() getUserIdParamDto: GetUserIdParamDTO,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe)
+    limit: number,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe)
+    page: number,
+  ): Promise<any> {
+    return this.usersService.findAll(getUserIdParamDto, limit, page);
   }
 
-  @Post()
-  public createUser(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.createUser(createUserDto);
+  @Post('/signup')
+  userSignUp(@Body() createUserDto: CreateUserDTO): Promise<User> {
+    return this.usersService.userSignUp(createUserDto);
+  }
+
+  @Post('/signin')
+  async userSignIn(
+    @Body() userCreds: CreateUserDTO,
+  ): Promise<{ signedToken: string }> {
+    return await this.usersService.userSignIn(userCreds);
   }
 
   @Patch()
-  public patchUser(@Body() patchUserDto: PatchUserDto) {
-    return patchUserDto;
+  async updateUser(@Body() updateUserDto: UpdateUserDTO) {
+    return updateUserDto;
   }
 }

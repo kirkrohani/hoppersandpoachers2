@@ -2,15 +2,9 @@ PATCH http://localhost:3000/posts
 Content-Type: application/json
 
 {
-  "id": 17,
-  "title": "What's new with NestJS",
-  "postType": "post",
-  "status": "published",
-  "content": "test content",
-  "publishOn": "2024-03-16T07:46:32+0000",
-  //"tags": ["nestjs", "typescript"],
-  "metaOptions" : {
-    "metaValue": "{ \"sidebarEnabled\": true, \"footerActive\": true }"
-    },
-  "tags": [4,7]
+  "id": "167abdd2-4886-40bb-b5d7-a4b99dc1d0de",
+  "title": "What's new with NestJS and Typescript 5",
+  "tags": ["54b5ebe1-805c-48b0-b926-9485873635db"]
+
+
 }

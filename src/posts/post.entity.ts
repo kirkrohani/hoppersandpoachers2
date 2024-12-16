@@ -5,21 +5,22 @@ import {
   JoinTable,
   ManyToMany,
   ManyToOne,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-
-import { CreatePostMetaOptionsDto } from 'src/meta-options/dtos/create-post-meta-options.dto';
+import { User } from '../users/user.entity';
+import { Exclude } from 'class-transformer';
+import { PostType } from './enums/postType.enum';
+import { PostStatus } from './enums/postStatus.enum';
+import { type } from 'os';
 import { MetaOption } from 'src/meta-options/meta-option.entity';
 import { Tag } from 'src/tags/tag.entity';
-import { User } from 'src/users/user.entity';
-import { PostStatus } from './enums/postStatus.enum';
-import { PostType } from './enums/postType.enum';
 
 @Entity()
 export class Post {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column({
     type: 'varchar',
@@ -27,6 +28,13 @@ export class Post {
     nullable: false,
   })
   title: string;
+
+  @Column({
+    type: 'varchar',
+    length: 512,
+    nullable: true,
+  })
+  description: string;
 
   @Column({
     type: 'enum',
@@ -72,10 +80,14 @@ export class Post {
   featuredImageUrl?: string;
 
   @Column({
-    type: 'timestamp', // 'datetime' in mysql
+    type: 'timestamp',
     nullable: true,
   })
-  publishOn?: Date;
+  publishedOn?: Date;
+
+  @ManyToMany(() => Tag, (tag) => tag.posts, { eager: true })
+  @JoinTable()
+  tags?: Tag[];
 
   @OneToOne(() => MetaOption, (metaOptions) => metaOptions.post, {
     cascade: true,
@@ -83,14 +95,16 @@ export class Post {
   })
   metaOptions?: MetaOption;
 
-  @ManyToOne(() => User, (user) => user.posts, {
-    eager: true,
+  @Column({
+    type: 'varchar',
+    nullable: true,
   })
+  parentId: string;
+
+  @ManyToOne(() => User, (user) => user.posts, { eager: true })
   author: User;
 
-  @ManyToMany(() => Tag, (tag) => tag.posts, {
-    eager: true,
-  })
-  @JoinTable()
-  tags?: Tag[];
+  // @ManyToOne((_type) => User, (user) => user.posts, { eager: false })
+  // @Exclude({ toPlainOnly: true })
+  // user: User;
 }

@@ -1,3 +1,4 @@
+import { Post } from 'src/posts/post.entity';
 import {
   Column,
   CreateDateColumn,
@@ -9,12 +10,10 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { Post } from 'src/posts/post.entity';
-
 @Entity()
 export class MetaOption {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column({
     type: 'json',
@@ -27,6 +26,9 @@ export class MetaOption {
 
   @UpdateDateColumn()
   updateDate: Date;
+
+  @DeleteDateColumn()
+  deleteDate: Date;
 
   @OneToOne(() => Post, (post) => post.metaOptions, {
     onDelete: 'CASCADE',

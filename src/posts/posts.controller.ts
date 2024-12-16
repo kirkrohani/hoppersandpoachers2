@@ -1,66 +1,122 @@
 import {
   Body,
   Controller,
-  Delete,
   Get,
-  Param,
-  ParseIntPipe,
-  Patch,
   Post,
+  Param,
+  Delete,
+  Patch,
   Query,
+  UseGuards,
+  Logger,
 } from '@nestjs/common';
 import { PostsService } from './providers/posts.service';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { PatchPostDto } from './dtos/patch-post.dto';
 import { CreatePostDTO } from './dtos/create-post.dto';
+import { GetPostsFilterDTO } from './dtos/get-posts-filter.dto';
+import { UpdatePostStatusDTO } from './dtos/update-post-status.dto';
+import { Post as PostMessage } from './post.entity';
+import { GetUser } from 'src/users/get-user.decorator';
+import { User } from '../users/user.entity';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { UpdatePostDTO } from './dtos/update-post.dto';
 
 @Controller('posts')
-@ApiTags('Posts')
+@ApiTags('POSTS')
 export class PostsController {
-  constructor(
-    /*
-     *  Injecting Posts Service
-     */
-    private readonly postsService: PostsService,
-  ) {}
+  private logger = new Logger('PostsController');
 
-  /*
-   * GET localhost:3000/posts/:userId
-   */
-  @Get('/:userId?')
-  public getPosts(@Param('userId') userId: string) {
-    return this.postsService.findAll(userId);
+  constructor(private postsService: PostsService) {}
+
+  @Get('/all')
+  getPosts(@Query() filters: GetPostsFilterDTO): Promise<PostMessage[]> {
+    return this.postsService.getPosts(filters);
   }
 
-  @ApiOperation({
-    summary: 'Creates a new blog post',
-  })
-  @ApiResponse({
-    status: 201,
-    description: 'You get a 201 response if your post is created successfully',
-  })
-  @Post()
-  public createPost(@Body() createPostDto: CreatePostDTO) {
-    return this.postsService.create(createPostDto);
+  @Get()
+  getPostsByUser(
+    @Query() filters: GetPostsFilterDTO,
+    @GetUser() user: User,
+  ): Promise<PostMessage[]> {
+    this.logger.verbose(`${user.username} called getPostsByUser().`);
+    return this.postsService.getPostsByUser(filters, user);
   }
 
-  @ApiOperation({
-    summary: 'Updates an existing blog post',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'A 200 response if the post is updated successfully',
-  })
-  @Patch()
-  public updatePost(@Body() patchPostsDto: PatchPostDto) {
-    return this.postsService.update(patchPostsDto);
+  @Get('/:postId')
+  getPostById(@Param('postId') postId: string): Promise<PostMessage> {
+    this.logger.verbose(`getPostsById() for post id: ${postId}`);
+    const post = this.postsService.getPostById(postId);
+    return post;
   }
 
   /**
-   * Route to delete a post
+   * CREATE POST
+   * @param createPostDTO
+   * @returns PostMessage
    */
-  @Delete()
-  public deletePost(@Query('id', ParseIntPipe) id: number) {
-    return this.postsService.delete(id);
+  @ApiResponse({
+    status: 201,
+    description: 'You receive a 201 if post was created successfully',
+  })
+  @ApiOperation({
+    summary: 'create a new blog post',
+  })
+  @Post()
+  createPost(@Body() createPostDTO: CreatePostDTO): Promise<PostMessage> {
+    this.logger.verbose(' Posts Controller createPost() method. ');
+    return this.postsService.createPost(createPostDTO);
+  }
+
+  /**
+   * DELETE POST
+   * @param postId
+   * @returns void
+   */
+  @ApiResponse({
+    status: 200,
+    description:
+      'You receive a 200 if the post and its meta-option was successfully deleted',
+  })
+  @ApiOperation({
+    summary: 'delete a post',
+  })
+  @Delete('/:postId')
+  removePostById(@Param('postId') postId: string): Promise<void> {
+    this.logger.verbose(` Posts Controller remove post id: ${postId}`);
+    return this.postsService.removePostById(postId);
+  }
+
+  /**
+   * UPDATE POST STATUS
+   * @param postId
+   * @param postStatus
+   * @param user
+   * @returns Post
+   */
+  @Patch('/:postId/status')
+  updatePostStatus(
+    @Param('postId') postId: string,
+    @Body() postStatus: UpdatePostStatusDTO,
+    @GetUser() user: User,
+  ): Promise<PostMessage> {
+    this.logger.verbose(
+      `${user.username} called updatePostStatus() to status: ${JSON.stringify(postStatus)}`,
+    );
+    return this.postsService.updatePostStatus(postId, postStatus, user);
+  }
+
+  @ApiResponse({
+    status: 200,
+    description: 'You receive a 200 if post was updated successfully',
+  })
+  @ApiOperation({
+    summary: 'update an existing blog post',
+  })
+  @Patch()
+  async updatePost(@Body() updatePostDto: UpdatePostDTO): Promise<PostMessage> {
+    this.logger.verbose(
+      'Posts Controller - updatePost() method ',
+      updatePostDto,
+    );
+    return this.postsService.updatePost(updatePostDto);
   }
 }

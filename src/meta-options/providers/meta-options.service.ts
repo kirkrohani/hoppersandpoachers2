@@ -1,23 +1,27 @@
-import { CreatePostMetaOptionsDto } from '../dtos/create-post-meta-options.dto';
 import { Injectable } from '@nestjs/common';
-import { MetaOption } from '../meta-option.entity';
-import { Repository } from 'typeorm';
+import { CreateMetaOptionsDTO } from '../dtos/create-post-meta-options.dto';
 import { InjectRepository } from '@nestjs/typeorm';
+
+import { MetaOptionsRepository } from '../meta-options.repository';
 
 @Injectable()
 export class MetaOptionsService {
+  /**
+   * @constructor
+   * @param metaOptionRepo
+   */
   constructor(
-    /**
-     * Injecting metaOptions repository
-     */
-    @InjectRepository(MetaOption)
-    private metaOptionsRepository: Repository<MetaOption>,
+    // Inject MetaOption Repo
+    @InjectRepository(MetaOptionsRepository)
+    private metaOptionRepo: MetaOptionsRepository,
   ) {}
 
-  public async create(createPostMetaOptionsDto: CreatePostMetaOptionsDto) {
-    let metaOption = this.metaOptionsRepository.create(
-      createPostMetaOptionsDto,
-    );
-    return await this.metaOptionsRepository.save(metaOption);
+  /**
+   * Method to CREATE A META OPTIONS object in meta_options db table
+   * @param createMetaOptionDTO
+   * @returns newly created MetaOption object
+   */
+  public async createMetaOption(createPostMetaOptionDTO: CreateMetaOptionsDTO) {
+    return await this.metaOptionRepo.createMetaOptions(createPostMetaOptionDTO);
   }
 }

@@ -1,92 +1,112 @@
-import { PatchPostDto } from './../dtos/patch-post.dto';
-import { TagsService } from './../../tags/providers/tags.service';
-import { CreatePostDTO } from '../dtos/create-post.dto';
 import { Injectable } from '@nestjs/common';
-import { UsersService } from 'src/users/providers/users.service';
-import { Repository } from 'typeorm';
-import { Post } from '../post.entity';
+import { CreatePostDTO } from '../dtos/create-post.dto';
+import { GetPostsFilterDTO } from '../dtos/get-posts-filter.dto';
+import { PostsRepository } from '../posts.repository';
 import { InjectRepository } from '@nestjs/typeorm';
-import { MetaOption } from 'src/meta-options/meta-option.entity';
-import { User } from 'src/users/user.entity';
-import { waitForDebugger } from 'inspector';
+import { Post } from '../post.entity';
+import { User } from '../../users/user.entity';
+import { UsersService } from 'src/users/providers/users.service';
+import { UpdatePostDTO } from '../dtos/update-post.dto';
+import { TagsService } from 'src/tags/providers/tags.service';
+import { UpdatePostStatusDTO } from '../dtos/update-post-status.dto';
 
 @Injectable()
 export class PostsService {
   constructor(
-    /*
-     * Injecting Users Service
+    /**
+     * Inject PostsRepository
      */
-    private readonly usersService: UsersService,
+    @InjectRepository(PostsRepository)
+    private postsRepository: PostsRepository,
 
     /**
-     * Injecting postsRepository
+     * Inject User Service
      */
-    @InjectRepository(Post)
-    private readonly postsRepository: Repository<Post>,
+    private usersService: UsersService,
 
     /**
-     * Injecting Tags service
+     * Inject Tags Service
      */
-    private readonly tagsService: TagsService,
+    private tagsService: TagsService,
   ) {}
 
   /**
-   * Method to create a new post
+   *
+   * CREATE POST Method which creates new posts
+   * @param createPostDto
+   * @param user
+   * @returns
    */
-  public async create(createPostDto: CreatePostDTO) {
+  async createPost(createPostDto: CreatePostDTO): Promise<Post> {
+    //Find User obj from db
     const author = await this.usersService.findOneById(createPostDto.authorId);
 
-    const tags = await this.tagsService.findMultipleTags(createPostDto.tags);
+    //Get all Tags objects from DB
+    const tags = await this.tagsService.findTags(createPostDto.tags);
 
-    // Create the post
-    const post = this.postsRepository.create({
-      ...createPostDto,
-      author: author,
-      tags: tags,
-    });
-
-    return await this.postsRepository.save(post);
+    return this.postsRepository.createPost(createPostDto, author, tags);
   }
 
   /**
-   * Method to find all posts
+   * GET POSTS method retrieves all posts if no filters are passed in
+   * @param filters
+   * @returns Post[]
    */
-  public async findAll(userId: string) {
-    // find all posts
-    const posts = await this.postsRepository.find({
-      relations: {
-        metaOptions: true,
-        author: true,
-        // tags: true,
-      },
-    });
+  async getPosts(filters: GetPostsFilterDTO): Promise<Post[]> {
+    return await this.postsRepository.getPosts(filters, null);
+  }
 
-    return posts;
+  async getPostsByUser(
+    filters: GetPostsFilterDTO,
+    user: User,
+  ): Promise<Post[]> {
+    return await this.postsRepository.getPosts(filters, user);
+  }
+
+  async getPostById(postId: string): Promise<Post> {
+    return await this.postsRepository.getPostById(postId, null);
   }
 
   /**
-   * Method to delete a post from the database
+   * REMOVE POST BY ID
+   * @param postId
    */
-  public async delete(id: number) {
-    // Find the post from the database
-    await this.postsRepository.delete(id);
+  async removePostById(postId: string): Promise<void> {
+    await this.postsRepository.removePost(postId);
+  }
 
-    return { deleted: true, id };
+  async updatePostStatus(
+    postId: string,
+    postStatus: UpdatePostStatusDTO,
+    user: User,
+  ): Promise<Post> {
+    return await this.postsRepository.updatePostStatus(
+      postId,
+      postStatus,
+      user,
+    );
   }
 
   /**
-   * Method to Update a post
+   * UPDATE POST
+   * @param updatePostDto
+   * @returns updated Promise<Post>
    */
-  public async update(patchPostDto: PatchPostDto) {
-    // Find new tags
-    const tags = await this.tagsService.findMultipleTags(patchPostDto.tags);
+  async updatePost(updatePostDto: UpdatePostDTO): Promise<Post> {
+    const tags = await this.tagsService.findTags(updatePostDto.tags);
 
-    // Update the post
-    const post = await this.postsRepository.findOneBy({
-      id: patchPostDto.id,
+    const post = await this.postsRepository.findOne({
+      id: updatePostDto.id,
     });
 
-    // Update the tags
+    post.title = updatePostDto.title ?? post.title;
+    post.content = updatePostDto.content ?? post.content;
+    post.status = updatePostDto.status ?? post.status;
+    post.postType = updatePostDto.postType ?? post.postType;
+    post.slug = updatePostDto.slug ?? post.slug;
+    post.featuredImageUrl =
+      updatePostDto.featuredImageUrl ?? post.featuredImageUrl;
+    post.publishedOn = updatePostDto.publishedOn ?? post.publishedOn;
     post.tags = tags;
 
     return await this.postsRepository.save(post);

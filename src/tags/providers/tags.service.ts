@@ -1,49 +1,47 @@
-import { In, Repository } from 'typeorm';
-import { CreateTagDto } from '../dtos/create-tag.dto';
 import { Injectable } from '@nestjs/common';
+import { TagsRepository } from '../tags.repository';
+import { CreateTagDTO } from '../dtos/create-tag.dto';
 import { Tag } from '../tag.entity';
-import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class TagsService {
   constructor(
     /**
-     * Inject tagsRepository
+     * Inject Tag Repository
      */
-    @InjectRepository(Tag)
-    private readonly tagsRepository: Repository<Tag>,
+    private tagsRepo: TagsRepository,
   ) {}
 
-  public async create(createTagDto: CreateTagDto) {
-    const tag = this.tagsRepository.create(createTagDto);
-    return await this.tagsRepository.save(tag);
+  /**
+   * Create Tag method, calls Tag Repository
+   * @param createTagDto
+   * @returns Promise<Tag>
+   */
+  async createTag(createTagDto: CreateTagDTO): Promise<Tag> {
+    return await this.tagsRepo.createTag(createTagDto);
   }
 
-  public async findMultipleTags(tags: string[]) {
-    const results = await this.tagsRepository.find({
-      where: {
-        id: In(tags),
-      },
-    });
-
-    return results;
+  async findTags(tagIds: string[]): Promise<Tag[]> {
+    return await this.tagsRepo.findTags(tagIds);
   }
 
-  public async delete(id: number) {
-    await this.tagsRepository.delete(id);
+  async deleteTag(tagId: string): Promise<{ deleted: boolean; id: string }> {
+    await this.tagsRepo.deleteTag(tagId);
 
     return {
       deleted: true,
-      id,
+      id: tagId,
     };
   }
 
-  public async softRemove(id: number) {
-    await this.tagsRepository.softDelete(id);
+  async softDeleteTag(
+    tagId: string,
+  ): Promise<{ deleted: boolean; id: string }> {
+    await this.tagsRepo.softDelete(tagId);
 
     return {
-      softDeleted: true,
-      id,
+      deleted: true,
+      id: tagId,
     };
   }
 }
