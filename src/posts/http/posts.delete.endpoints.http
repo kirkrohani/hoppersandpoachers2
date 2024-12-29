@@ -1,2 +1,1 @@
-DELETE http://localhost:3000/posts
-  ?id=1
+DELETE http://localhost:3000/posts/e809d8a0-2254-4616-bad0-ed343b2efc62

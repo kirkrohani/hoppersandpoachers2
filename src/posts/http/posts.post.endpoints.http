@@ -2,10 +2,10 @@ POST http://localhost:3000/posts
 Content-Type: application/json
 
 {
-  "title": "What's new with NestJS 6",
-  "description": "This is the description of my post 6",
+  "title": "What's new with NestJS 7",
+  "description": "This is the description of my post 7",
   "postType": "post",
-  "slug": "new-with-nest-js-6",
+  "slug": "new-with-nest-js-7",
   "status": "DRAFT",
   "content": "post-content",
   "schema": "{\r\n    \"@context\": \"https:\/\/schema.org\",\r\n    \"@type\": \"Person\"\r\n  }",
@@ -15,6 +15,6 @@ Content-Type: application/json
     {
        "metaValue": "{ \"sidebarEnabled\": false, \"footerActive\": false }"
     },
-  "authorId": "8d6a3b78-5fb5-4bad-9eed-6731f34b72ee",
-  "tags": ["ad7982f4-59c4-4639-ae49-232df11d6f81", "09badbbb-0bfd-4c8a-971f-291fba4715f7"]
+  "authorId": "adcc0431-afae-46c2-bc89-4e52cf6f16a9",
+  "tags": ["67c92d3c-5a2f-4c3d-8b5e-41d01645ba57", "fe4b645d-fcfc-4ce8-b795-f905ca8ceb82"]
 }

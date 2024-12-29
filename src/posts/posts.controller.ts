@@ -104,6 +104,11 @@ export class PostsController {
     return this.postsService.updatePostStatus(postId, postStatus, user);
   }
 
+  /**
+   * UPDATE POST
+   * @param updatePostDto
+   * @returns updated Post Object
+   */
   @ApiResponse({
     status: 200,
     description: 'You receive a 200 if post was updated successfully',
