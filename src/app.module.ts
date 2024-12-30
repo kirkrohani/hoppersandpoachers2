@@ -9,6 +9,7 @@ import { TagsModule } from './tags/tags.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import appConfig from './config/app.config';
 import databaseConfig from './config/database.config';
+import envValidation from './config/env.validation';
 /**
  * Importing Entities
  * */
@@ -25,6 +26,7 @@ console.log('Environment: ', ENV);
       isGlobal: true,
       envFilePath: !ENV ? '.env' : `.env.stage.${ENV}`,
       load: [appConfig, databaseConfig],
+      validationSchema: envValidation,
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
