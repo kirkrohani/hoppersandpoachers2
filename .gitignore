@@ -37,10 +37,10 @@ lerna-debug.log*
 
 # dotenv environment variable files
 .env
-.env.development.local
-.env.test.local
-.env.production.local
-.env.local
+.env.stage.dev
+.env.stage.test
+.env.stage.prod
+
 
 # temp directory
 .temp
@@ -58,6 +58,6 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 ## ignoring documentation
 /documentation
 
-## ignoring .vscode 
+## ignoring .vscode
 /.vscode
 package-lock.json

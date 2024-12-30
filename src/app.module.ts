@@ -1,19 +1,20 @@
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MetaOptionsModule } from './meta-options/meta-options.module';
 import { Module } from '@nestjs/common';
 import { PostsModule } from './posts/posts.module';
-import { Tag } from './tags/tag.entity';
 import { TagsModule } from './tags/tags.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { appConfig } from './config/app.config';
 /**
  * Importing Entities
  * */
-import { User } from './users/user.entity';
 import { UsersModule } from './users/users.module';
 
+const ENV = process.env.STAGE;
+console.log('Environment: ', ENV);
 @Module({
   imports: [
     UsersModule,
@@ -21,20 +22,21 @@ import { UsersModule } from './users/users.module';
     AuthModule,
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: !ENV ? '.env' : `.env.stage.${ENV}`,
+      load: [appConfig],
     }),
     TypeOrmModule.forRootAsync({
-      imports: [],
-      inject: [],
-      useFactory: () => ({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
         type: 'postgres',
-        // entities: [User],
-        synchronize: true,
-        port: 15432,
-        username: 'postgres',
-        password: 'postgres',
-        host: 'localhost',
-        autoLoadEntities: true,
-        database: 'hoppers-poachers',
+        synchronize: configService.get('database.synchronize'),
+        port: configService.get('database.port'),
+        username: configService.get('database.user'),
+        password: configService.get('database.password'),
+        host: configService.get('database.host'),
+        autoLoadEntities: configService.get('database.autoLoadEntities'),
+        database: configService.get('database.name'),
       }),
     }),
     TagsModule,

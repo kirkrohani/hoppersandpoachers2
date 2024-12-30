@@ -11,6 +11,7 @@
     "start": "nest start",
     "start:dev": "STAGE=dev nest start --watch",
     "start:debug": "STAGE=dev nest start --debug --watch",
+    "start:test": "STAGE=test nest start --watch",
     "start:prod": "STAGE=prod node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "STAGE=dev jest",
@@ -75,6 +76,9 @@
       "ts"
     ],
     "rootDir": "./",
+    "modulePaths": [
+      "<rootDir"
+    ],
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
