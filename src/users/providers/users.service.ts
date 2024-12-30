@@ -14,6 +14,8 @@ import { ERROR_CODES, ERROR_MESSAGES } from '../../utils/errors';
 import { User } from '../user.entity';
 import { GetUserIdParamDTO } from '../dtos/get-user-id-param.dto';
 import { AuthService } from 'src/auth/providers/auth.service';
+import { ConfigType } from '@nestjs/config';
+import profileConfig from '../config/profile.config';
 
 /**
  * Users Service connects to users table and performs business services on users object
@@ -29,7 +31,18 @@ export class UsersService {
   constructor(
     @Inject(forwardRef(() => AuthService))
     private authService: AuthService,
-    @InjectRepository(UserRepository) private userRepo: UserRepository,
+
+    /**
+     * Inject User Repo
+     */
+    @InjectRepository(UserRepository)
+    private userRepo: UserRepository,
+
+    /**
+     * Inject profile config
+     */
+    @Inject(profileConfig.KEY)
+    private readonly profileConfiguration: ConfigType<typeof profileConfig>,
   ) {}
 
   /**
@@ -72,7 +85,7 @@ export class UsersService {
   }
 
   /**
-   * method which returns and array of all users from database
+   * FIND ALL USERS - method which returns and array of all users from database
    * @param getUserIdParamDto
    * @param limit
    * @param page
@@ -84,6 +97,7 @@ export class UsersService {
     page: number,
   ): Promise<any> {
     // const isAuth = this.authService.isAuthenticated();
+    console.log('Profile Config: ', this.profileConfiguration);
     return [
       {
         firstname: 'Kirk',
