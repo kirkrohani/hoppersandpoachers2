@@ -4,6 +4,7 @@ import {
   Inject,
   Injectable,
   InternalServerErrorException,
+  RequestTimeoutException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { UserRepository } from '.././user.repository';
@@ -51,15 +52,22 @@ export class UsersService {
    * @returns Promise<void>
    */
   async userSignUp(createUserDto: CreateUserDTO): Promise<User> {
-    // check for duplicate username, throw error if dupe
+    let existingUser = undefined;
+
     try {
-      return await this.userRepo.createUser(createUserDto);
+      // check if this user already exists in db
+      existingUser = await this.userRepo.findUser(createUserDto.username);
     } catch (error) {
-      if (error.code === ERROR_CODES.DUPLICATE_USERNAME.toString()) {
-        throw new ConflictException(ERROR_MESSAGES.DUPLICATE_USERNAME);
-      } else {
-        throw new InternalServerErrorException();
-      }
+      throw new RequestTimeoutException(ERROR_MESSAGES.UNABLE_TO_PROCESS, {
+        description: 'Error connecting to the database',
+      });
+    }
+
+    // if user exists throw an exception otherwise create user in db
+    if (existingUser) {
+      throw new ConflictException(ERROR_MESSAGES.DUPLICATE_USERNAME);
+    } else {
+      return await this.userRepo.createUser(createUserDto);
     }
   }
 

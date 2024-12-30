@@ -3,6 +3,7 @@ import {
   Controller,
   DefaultValuePipe,
   Get,
+  Logger,
   Param,
   ParseIntPipe,
   Patch,
@@ -19,6 +20,8 @@ import { User } from './user.entity';
 @Controller('users')
 @ApiTags('USERS')
 export class UsersController {
+  private logger = new Logger('UsersCOntroller');
+
   /*
    Final Endpoint - /users/:id?limit=10&page=1
    Param id - optional
@@ -55,6 +58,7 @@ export class UsersController {
 
   @Post('/signup')
   userSignUp(@Body() createUserDto: CreateUserDTO): Promise<User> {
+    this.logger.verbose(`userSignUp for user ${JSON.stringify(createUserDto)}`);
     return this.usersService.userSignUp(createUserDto);
   }
 
