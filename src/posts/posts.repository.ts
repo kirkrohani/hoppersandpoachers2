@@ -6,12 +6,14 @@ import {
   InternalServerErrorException,
   Logger,
   NotFoundException,
+  RequestTimeoutException,
 } from '@nestjs/common';
 import { UpdatePostStatusDTO } from './dtos/update-post-status.dto';
 import { GetPostsFilterDTO } from './dtos/get-posts-filter.dto';
 import { User } from '../users/user.entity';
 import { error } from 'console';
 import { Tag } from 'src/tags/tag.entity';
+import { ERROR_MESSAGES } from 'src/utils/errors';
 
 @EntityRepository(Post)
 export class PostsRepository extends Repository<Post> {
@@ -141,6 +143,19 @@ export class PostsRepository extends Repository<Post> {
         error,
       );
       throw new InternalServerErrorException();
+    }
+  }
+
+  /**
+   * UPDATE POST - Updates any and all fields of a post in the db
+   * @param post
+   * @returns Promise<Post>
+   */
+  async updatePost(post: Post): Promise<Post> {
+    try {
+      return await this.save(post);
+    } catch (error) {
+      throw new RequestTimeoutException(ERROR_MESSAGES.UNABLE_TO_PROCESS);
     }
   }
 }

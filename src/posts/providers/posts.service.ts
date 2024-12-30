@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreatePostDTO } from '../dtos/create-post.dto';
 import { GetPostsFilterDTO } from '../dtos/get-posts-filter.dto';
 import { PostsRepository } from '../posts.repository';
@@ -9,6 +9,7 @@ import { UsersService } from 'src/users/providers/users.service';
 import { UpdatePostDTO } from '../dtos/update-post.dto';
 import { TagsService } from 'src/tags/providers/tags.service';
 import { UpdatePostStatusDTO } from '../dtos/update-post-status.dto';
+import { ERROR_MESSAGES } from 'src/utils/errors';
 
 @Injectable()
 export class PostsService {
@@ -93,11 +94,18 @@ export class PostsService {
    * @returns updated Promise<Post>
    */
   async updatePost(updatePostDto: UpdatePostDTO): Promise<Post> {
-    const tags = await this.tagsService.findTags(updatePostDto.tags);
+    let tags = undefined;
+    let post = undefined;
+    tags = await this.tagsService.findTags(updatePostDto.tags);
 
-    const post = await this.postsRepository.findOne({
-      id: updatePostDto.id,
-    });
+    if (!tags || tags?.length !== updatePostDto.tags?.length) {
+      throw new BadRequestException(ERROR_MESSAGES.TAGS_NOT_CORRECT);
+    }
+
+    post = await this.getPostById(updatePostDto.id);
+    if (!post) {
+      throw new BadRequestException(ERROR_MESSAGES.POST_NOT_FOUND);
+    }
 
     post.title = updatePostDto.title ?? post.title;
     post.content = updatePostDto.content ?? post.content;
@@ -109,6 +117,6 @@ export class PostsService {
     post.publishedOn = updatePostDto.publishedOn ?? post.publishedOn;
     post.tags = tags;
 
-    return await this.postsRepository.save(post);
+    return this.postsRepository.updatePost(post);
   }
 }
