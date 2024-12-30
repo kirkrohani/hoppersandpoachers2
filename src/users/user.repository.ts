@@ -1,6 +1,8 @@
 import { EntityRepository, Repository } from 'typeorm';
 import { User } from './user.entity';
 import { CreateUserDTO } from './dtos/create-user.dto';
+import { ConflictException, RequestTimeoutException } from '@nestjs/common';
+import { ERROR_MESSAGES } from 'src/utils/errors';
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
@@ -15,19 +17,38 @@ export class UserRepository extends Repository<User> {
       lastname,
       email,
     });
-    user = await this.save(user);
+
+    try {
+      user = await this.save(user);
+    } catch (error) {
+      throw new RequestTimeoutException(ERROR_MESSAGES.UNABLE_TO_PROCESS, {
+        description: 'Error connecting to the database',
+      });
+    }
     return user;
   }
 
   async findUserById(userId: string): Promise<User> {
-    return await this.findOne({
-      where: { id: userId },
-    });
+    try {
+      return await this.findOne({
+        where: { id: userId },
+      });
+    } catch (error) {
+      throw new RequestTimeoutException(ERROR_MESSAGES.UNABLE_TO_PROCESS, {
+        description: 'Error connecting to the database',
+      });
+    }
   }
 
   async findUser(username: string): Promise<User> {
-    return await this.findOne({
-      where: { username: username },
-    });
+    try {
+      return await this.findOne({
+        where: { username: username },
+      });
+    } catch (error) {
+      throw new RequestTimeoutException(ERROR_MESSAGES.UNABLE_TO_PROCESS, {
+        description: 'Error connecting to the database',
+      });
+    }
   }
 }

@@ -54,15 +54,8 @@ export class UsersService {
   async userSignUp(createUserDto: CreateUserDTO): Promise<User> {
     let existingUser = undefined;
 
-    try {
-      // check if this user already exists in db
-      existingUser = await this.userRepo.findUser(createUserDto.username);
-    } catch (error) {
-      throw new RequestTimeoutException(ERROR_MESSAGES.UNABLE_TO_PROCESS, {
-        description: 'Error connecting to the database',
-      });
-    }
-
+    // check if this user already exists in db
+    existingUser = await this.userRepo.findUser(createUserDto.username);
     // if user exists throw an exception otherwise create user in db
     if (existingUser) {
       throw new ConflictException(ERROR_MESSAGES.DUPLICATE_USERNAME);
