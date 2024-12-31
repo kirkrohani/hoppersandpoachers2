@@ -17,6 +17,7 @@ import { UsersModule } from './users/users.module';
 
 const ENV = process.env.STAGE;
 console.log('Environment: ', ENV);
+
 @Module({
   imports: [
     UsersModule,

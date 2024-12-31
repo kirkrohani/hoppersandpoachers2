@@ -3,20 +3,19 @@ import {
   forwardRef,
   Inject,
   Injectable,
-  InternalServerErrorException,
   RequestTimeoutException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { UserRepository } from '.././user.repository';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDTO } from '.././dtos/create-user.dto';
-import { ERROR_CODES, ERROR_MESSAGES } from '../../utils/errors';
+import { ERROR_MESSAGES } from '../../utils/errors';
 
 import { User } from '../user.entity';
 import { GetUserIdParamDTO } from '../dtos/get-user-id-param.dto';
 import { AuthService } from 'src/auth/providers/auth.service';
 import { ConfigType } from '@nestjs/config';
 import profileConfig from '../config/profile.config';
+import { Repository } from 'typeorm';
 
 /**
  * Users Service connects to users table and performs business services on users object
@@ -34,10 +33,10 @@ export class UsersService {
     private authService: AuthService,
 
     /**
-     * Inject User Repo
+     * Injecting usersRepository
      */
-    @InjectRepository(UserRepository)
-    private userRepo: UserRepository,
+    @InjectRepository(User)
+    private usersRepository: Repository<User>,
 
     /**
      * Inject profile config
@@ -52,15 +51,32 @@ export class UsersService {
    * @returns Promise<void>
    */
   async userSignUp(createUserDto: CreateUserDTO): Promise<User> {
+    console.log('inside users service');
     let existingUser = undefined;
 
     // check if this user already exists in db
-    existingUser = await this.userRepo.findUser(createUserDto.username);
+    try {
+      existingUser = await this.usersRepository.findOne({
+        where: { username: createUserDto.username },
+      });
+      console.log('existing user: ', existingUser);
+    } catch (error) {
+      throw new RequestTimeoutException(ERROR_MESSAGES.UNABLE_TO_PROCESS, {
+        description: 'Error connecting to the database',
+      });
+    }
     // if user exists throw an exception otherwise create user in db
     if (existingUser) {
       throw new ConflictException(ERROR_MESSAGES.DUPLICATE_USERNAME);
     } else {
-      return await this.userRepo.createUser(createUserDto);
+      const user = this.usersRepository.create({
+        username: createUserDto.username,
+        password: createUserDto.password,
+        firstname: createUserDto.firstname,
+        lastname: createUserDto.lastname,
+        email: createUserDto.email,
+      });
+      return await this.usersRepository.save(user);
     }
   }
 
@@ -73,7 +89,9 @@ export class UsersService {
     createUserDto: CreateUserDTO,
   ): Promise<{ signedToken: string }> {
     const { username, password } = createUserDto;
-    const user: User = await this.userRepo.findOne({ username });
+    const user: User = await this.usersRepository.findOne({
+      where: { username: username },
+    });
 
     if (user) {
       // const authTokenPayload: iJWTPayload = { username };
@@ -114,11 +132,13 @@ export class UsersService {
   }
 
   /**
-   * method which finds one specific user by their user id from the database
+   * FIND ONE USER BY USER ID - method which finds one specific user by their user id from the database
    * @param username
    * @returns Promise<User>
    */
   async findOneById(userId: string): Promise<any> {
-    return await this.userRepo.findUserById(userId);
+    return await this.usersRepository.findOne({
+      where: { id: userId },
+    });
   }
 }

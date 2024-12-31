@@ -29,7 +29,7 @@ export class PostsController {
 
   @Get('/all')
   getPosts(@Query() filters: GetPostsFilterDTO): Promise<PostMessage[]> {
-    return this.postsService.getPosts(filters);
+    return this.postsService.getPosts(filters, null);
   }
 
   @Get()
