@@ -13,8 +13,8 @@ Content-Type: application/json
   "publishedOn": "2024-03-16T07:46:32+0000",
   "metaOptions":
     {
-       "metaValue": "{ \"sidebarEnabled\": false, \"footerActive\": false }"
+       "metaValue": "{ \"sidebarEnabled\": true, \"footerActive\": false }"
     },
   "authorId": "adcc0431-afae-46c2-bc89-4e52cf6f16a9",
-  "tags": ["67c92d3c-5a2f-4c3d-8b5e-41d01645ba57", "fe4b645d-fcfc-4ce8-b795-f905ca8ceb82"]
+  "tags": ["237d9a53-842d-448d-999b-f1b2eb6eb0c6", "b694f4b5-f842-4731-b598-459a95adf452"]
 }

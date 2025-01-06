@@ -2,9 +2,8 @@ PATCH http://localhost:3000/posts
 Content-Type: application/json
 
 {
-  "id": "579d163d-88be-46a0-a11b-e593f524aed",
+  "id": "5f65f4f2-fb84-4273-b7be-dc246c980dba",
   "title": "What's new with NestJS and Typescript 8c",
-  "tags": ["fa8b34f1-95e7-4886-b090-e010612b5e43", "67c92d3c-5a2f-4c3d-8b5e-41d01645ba57"]
-
+  "tags": ["237d9a53-842d-448d-999b-f1b2eb6eb0c6", "b694f4b5-f842-4731-b598-459a95adf452"]
 
 }

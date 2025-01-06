@@ -15,7 +15,7 @@ import { GetUserIdParamDTO } from '../dtos/get-user-id-param.dto';
 import { AuthService } from 'src/auth/providers/auth.service';
 import { ConfigType } from '@nestjs/config';
 import profileConfig from '../config/profile.config';
-import { Repository } from 'typeorm';
+import { Repository, DataSource } from 'typeorm';
 
 /**
  * Users Service connects to users table and performs business services on users object
@@ -43,14 +43,19 @@ export class UsersService {
      */
     @Inject(profileConfig.KEY)
     private readonly profileConfiguration: ConfigType<typeof profileConfig>,
+
+    /**
+     * Inject Datasource
+     */
+    private readonly dataSource: DataSource,
   ) {}
 
   /**
-   * USER SIGN UP - Method to create a new user in database
+   * CREATE SINGLE USER - Method to create a new user in database
    * @param createUserDto
    * @returns Promise<void>
    */
-  async userSignUp(createUserDto: CreateUserDTO): Promise<User> {
+  async createUser(createUserDto: CreateUserDTO): Promise<User> {
     console.log('inside users service');
     let existingUser = undefined;
 
@@ -69,14 +74,40 @@ export class UsersService {
     if (existingUser) {
       throw new ConflictException(ERROR_MESSAGES.DUPLICATE_USERNAME);
     } else {
-      const user = this.usersRepository.create({
-        username: createUserDto.username,
-        password: createUserDto.password,
-        firstname: createUserDto.firstname,
-        lastname: createUserDto.lastname,
-        email: createUserDto.email,
-      });
+      const user = this.usersRepository.create(createUserDto);
       return await this.usersRepository.save(user);
+    }
+  }
+
+  /**
+   * CREATE MANY USERS - creates multiple users using QueryRunner
+   * @param createUsersDto
+   */
+  async createManyUsers(createUsersDto: CreateUserDTO[]): Promise<void> {
+    const newUsers: User[] = [];
+
+    //Create QueryRunner instance
+    const queryRunner = this.dataSource.createQueryRunner();
+
+    //Connect to datasource
+    await queryRunner.connect();
+
+    //Start Transaction
+    queryRunner.startTransaction();
+    try {
+      for (const user of createUsersDto) {
+        const newUser = queryRunner.manager.create(User, user);
+        const result = await queryRunner.manager.save(newUser);
+        newUsers.push(result);
+      }
+      //If successful - commit
+      await queryRunner.commitTransaction();
+    } catch (error) {
+      //If unsuccessful - rollback
+      await queryRunner.rollbackTransaction();
+    } finally {
+      //Close Transaction
+      await queryRunner.release();
     }
   }
 
@@ -116,7 +147,6 @@ export class UsersService {
     page: number,
   ): Promise<any> {
     // const isAuth = this.authService.isAuthenticated();
-    console.log('Profile Config: ', this.profileConfiguration);
     return [
       {
         firstname: 'Kirk',
@@ -137,8 +167,14 @@ export class UsersService {
    * @returns Promise<User>
    */
   async findOneById(userId: string): Promise<any> {
-    return await this.usersRepository.findOne({
-      where: { id: userId },
-    });
+    try {
+      return await this.usersRepository.findOne({
+        where: { id: userId },
+      });
+    } catch (error) {
+      throw new RequestTimeoutException(ERROR_MESSAGES.UNABLE_TO_PROCESS, {
+        description: 'Error connecting to the database',
+      });
+    }
   }
 }

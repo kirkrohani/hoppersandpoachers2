@@ -20,7 +20,7 @@ import { User } from './user.entity';
 @Controller('users')
 @ApiTags('USERS')
 export class UsersController {
-  private logger = new Logger('UsersCOntroller');
+  private logger = new Logger('UsersController');
 
   /*
    Final Endpoint - /users/:id?limit=10&page=1
@@ -57,9 +57,9 @@ export class UsersController {
   }
 
   @Post('/signup')
-  userSignUp(@Body() createUserDto: CreateUserDTO): Promise<User> {
+  createUser(@Body() createUserDto: CreateUserDTO): Promise<User> {
     this.logger.verbose(`userSignUp for user ${JSON.stringify(createUserDto)}`);
-    return this.usersService.userSignUp(createUserDto);
+    return this.usersService.createUser(createUserDto);
   }
 
   @Post('/signin')
