@@ -16,6 +16,7 @@ import { GetUserIdParamDTO } from './dtos/get-user-id-param.dto';
 import { UpdateUserDTO } from './dtos/update-user.dto';
 import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { User } from './user.entity';
+import { UsersCreateMultipleDTO } from './dtos/create-multiple-users.dto';
 
 @Controller('users')
 @ApiTags('USERS')
@@ -60,6 +61,14 @@ export class UsersController {
   createUser(@Body() createUserDto: CreateUserDTO): Promise<User> {
     this.logger.verbose(`userSignUp for user ${JSON.stringify(createUserDto)}`);
     return this.usersService.createUser(createUserDto);
+  }
+
+  @Post('/signupMultiple')
+  createManyUsers(
+    @Body() createMultipleUsersDto: UsersCreateMultipleDTO,
+  ): Promise<User[]> {
+    this.logger.verbose(`userSignUp for multiple users`);
+    return this.usersService.createMultipleUsers(createMultipleUsersDto);
   }
 
   @Post('/signin')

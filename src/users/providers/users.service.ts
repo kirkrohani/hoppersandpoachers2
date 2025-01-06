@@ -16,6 +16,10 @@ import { AuthService } from 'src/auth/providers/auth.service';
 import { ConfigType } from '@nestjs/config';
 import profileConfig from '../config/profile.config';
 import { Repository, DataSource } from 'typeorm';
+import { UsersCreateMultpleProvider } from './users-create-multiple.provider';
+import { UsersCreateMultipleDTO } from '../dtos/create-multiple-users.dto';
+import { string, number, any } from 'joi';
+import { async } from 'rxjs';
 
 /**
  * Users Service connects to users table and performs business services on users object
@@ -48,6 +52,11 @@ export class UsersService {
      * Inject Datasource
      */
     private readonly dataSource: DataSource,
+
+    /**
+     * Inject usersCreateManyProvider
+     */
+    private readonly usersCreateMultipleProvider: UsersCreateMultpleProvider,
   ) {}
 
   /**
@@ -83,32 +92,12 @@ export class UsersService {
    * CREATE MANY USERS - creates multiple users using QueryRunner
    * @param createUsersDto
    */
-  async createManyUsers(createUsersDto: CreateUserDTO[]): Promise<void> {
-    const newUsers: User[] = [];
-
-    //Create QueryRunner instance
-    const queryRunner = this.dataSource.createQueryRunner();
-
-    //Connect to datasource
-    await queryRunner.connect();
-
-    //Start Transaction
-    queryRunner.startTransaction();
-    try {
-      for (const user of createUsersDto) {
-        const newUser = queryRunner.manager.create(User, user);
-        const result = await queryRunner.manager.save(newUser);
-        newUsers.push(result);
-      }
-      //If successful - commit
-      await queryRunner.commitTransaction();
-    } catch (error) {
-      //If unsuccessful - rollback
-      await queryRunner.rollbackTransaction();
-    } finally {
-      //Close Transaction
-      await queryRunner.release();
-    }
+  async createMultipleUsers(
+    createMultipleUsersDto: UsersCreateMultipleDTO,
+  ): Promise<User[]> {
+    return await this.usersCreateMultipleProvider.createMultipleUsers(
+      createMultipleUsersDto,
+    );
   }
 
   /**

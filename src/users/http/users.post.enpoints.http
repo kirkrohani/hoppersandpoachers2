@@ -3,8 +3,31 @@ Content-Type: application/json
 
 {
   "firstname": "John",
-  "lastname": "Smith",
-  "username": "johnsmith",
-  "email": "johnsmith@gmail.com",
+  "lastname": "Barts",
+  "username": "johnbarts",
+  "email": "johnsbarts@gmail.com",
   "password": "Password123#"
 }
+
+POST http://localhost:3000/users/signupMultiple
+Content-Type: application/json
+{
+  "users": [
+    {
+    "firstname": "John",
+    "lastname": "Smith1",
+    "username": "johnsmith1",
+    "email": "johnsmith1@gmail.com",
+    "password": "Password123#"
+    },
+    {
+    "firstname": "John",
+    "lastname": "Smith2",
+    "username": "johnsmith2",
+    "email": "johnsmith2@gmail.com",
+    "password": "Password123#"
+    }
+  ]
+}
+
+
