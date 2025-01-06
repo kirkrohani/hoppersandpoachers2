@@ -6,6 +6,8 @@ export enum ERROR_MESSAGES {
   UNABLE_TO_PROCESS = 'Unable to process your request at this time. Please try again later',
   TAGS_NOT_CORRECT = 'Please check your Tag Ids and ensure they are correct',
   POST_NOT_FOUND = 'The Post Id does not exist',
+  COULD_NOT_CONNECT_TO_DB = 'Could not connect to the database',
+  TRANSACTION_FAILED = 'Rolling back transaction, could not complete all calls in the transaction',
 }
 
 export enum ERROR_CODES {
