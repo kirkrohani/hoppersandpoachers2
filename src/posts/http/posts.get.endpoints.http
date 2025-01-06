@@ -1,1 +1,9 @@
 GET  http://localhost:3000/posts/all
+
+
+
+GET  http://localhost:3000/posts/all
+?status=ACTIVE
+&search=john%20doe
+&limit=10
+&page=1

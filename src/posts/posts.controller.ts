@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 import { PostsService } from './providers/posts.service';
 import { CreatePostDTO } from './dtos/create-post.dto';
-import { GetPostsFilterDTO } from './dtos/get-posts-filter.dto';
+import { GetPostsDTO, GetPostsFilterDTO } from './dtos/get-posts-filter.dto';
 import { UpdatePostStatusDTO } from './dtos/update-post-status.dto';
 import { Post as PostMessage } from './post.entity';
 import { GetUser } from 'src/users/get-user.decorator';
@@ -28,13 +28,15 @@ export class PostsController {
   constructor(private postsService: PostsService) {}
 
   @Get('/all')
-  getPosts(@Query() filters: GetPostsFilterDTO): Promise<PostMessage[]> {
+  getPosts(@Query() filters: GetPostsDTO): Promise<PostMessage[]> {
+    console.log('FILTERS: ', filters);
+
     return this.postsService.getPosts(filters, null);
   }
 
   @Get()
   getPostsByUser(
-    @Query() filters: GetPostsFilterDTO,
+    @Query() filters: GetPostsDTO,
     @GetUser() user: User,
   ): Promise<PostMessage[]> {
     this.logger.verbose(`${user.username} called getPostsByUser().`);

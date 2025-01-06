@@ -1,6 +1,7 @@
 import { IsEnum, IsOptional, IsString } from 'class-validator';
 import { PostStatus } from '../enums/postStatus.enum';
-import { ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiPropertyOptional, IntersectionType } from '@nestjs/swagger';
+import { PaginationQueryDTO } from 'src/common/pagination/pagination-query.dto';
 
 export class GetPostsFilterDTO {
   @ApiPropertyOptional()
@@ -13,3 +14,8 @@ export class GetPostsFilterDTO {
   @IsString()
   search?: string;
 }
+
+export class GetPostsDTO extends IntersectionType(
+  GetPostsFilterDTO,
+  PaginationQueryDTO,
+) {}
