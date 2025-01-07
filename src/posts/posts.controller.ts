@@ -28,10 +28,10 @@ export class PostsController {
   constructor(private postsService: PostsService) {}
 
   @Get('/all')
-  getPosts(@Query() filters: GetPostsDTO): Promise<PostMessage[]> {
-    console.log('FILTERS: ', filters);
+  getPosts(@Query() postQuery: GetPostsDTO): Promise<PostMessage[]> {
+    console.log('postQuery: ', postQuery);
 
-    return this.postsService.getPosts(filters, null);
+    return this.postsService.getPosts(postQuery, null);
   }
 
   @Get()

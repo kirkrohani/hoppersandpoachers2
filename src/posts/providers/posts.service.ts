@@ -7,7 +7,7 @@ import {
   RequestTimeoutException,
 } from '@nestjs/common';
 import { CreatePostDTO } from '../dtos/create-post.dto';
-import { GetPostsFilterDTO } from '../dtos/get-posts-filter.dto';
+import { GetPostsDTO, GetPostsFilterDTO } from '../dtos/get-posts-filter.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Post } from '../post.entity';
 import { User } from '../../users/user.entity';
@@ -78,41 +78,13 @@ export class PostsService {
    * @param filters
    * @returns Post[]
    */
-  async getPosts(filters: GetPostsFilterDTO, user: User): Promise<Post[]> {
-    const { status, search } = filters;
-    const query = this.postsRepository.createQueryBuilder('post');
-    if (user) {
-      query.where({ user });
-    }
+  async getPosts(postQuery: GetPostsDTO, user: User): Promise<Post[]> {
+    const posts = await this.postsRepository.find({
+      skip: (postQuery.page - 1) * postQuery.limit,
+      take: postQuery.limit,
+    });
 
-    if (status) {
-      query.andWhere('post.status = :status', { status });
-    }
-    if (search) {
-      query.andWhere(
-        new Brackets((qb) => {
-          qb.where(
-            'LOWER(post.title) LIKE LOWER(:search) OR LOWER(post.description) LIKE LOWER(:search)',
-            { search: `%${search}%` },
-          );
-        }),
-      );
-    }
-    try {
-      //allows us to eager load metaOptions with the Post
-      query.leftJoinAndSelect('post.metaOptions', 'metaoption');
-      query.leftJoinAndSelect('post.author', 'user');
-      query.leftJoinAndSelect('post.tags', 'tags');
-
-      const posts = await query.getMany();
-      return posts;
-    } catch (error) {
-      this.logger.error(
-        `Error in getPosts() called with user ${JSON.stringify(user)} and search filters ${JSON.stringify(filters)}`,
-        error,
-      );
-      throw new InternalServerErrorException();
-    }
+    return posts;
   }
 
   async getPostsByUser(

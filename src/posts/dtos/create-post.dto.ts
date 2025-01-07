@@ -1,6 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsArray,
+  IsDate,
   IsEnum,
   IsISO8601,
   IsJSON,
@@ -103,7 +104,7 @@ export class CreatePostDTO {
    * Published On
    * Type: Date
    */
-  @IsISO8601()
+  @IsDate()
   @IsOptional()
   @ApiPropertyOptional()
   publishedOn?: Date;
