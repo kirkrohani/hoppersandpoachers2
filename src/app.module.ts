@@ -14,6 +14,7 @@ import envValidation from './config/env.validation';
  * Importing Entities
  * */
 import { UsersModule } from './users/users.module';
+import { PaginationModule } from './common/pagination/pagination.module';
 
 const ENV = process.env.STAGE;
 console.log('Environment: ', ENV);
@@ -45,6 +46,7 @@ console.log('Environment: ', ENV);
     }),
     TagsModule,
     MetaOptionsModule,
+    PaginationModule,
   ],
   controllers: [AppController],
   providers: [AppService],

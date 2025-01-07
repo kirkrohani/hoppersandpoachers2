@@ -7,7 +7,8 @@ import {
   RequestTimeoutException,
 } from '@nestjs/common';
 import { CreatePostDTO } from '../dtos/create-post.dto';
-import { GetPostsDTO, GetPostsFilterDTO } from '../dtos/get-posts-filter.dto';
+import { GetPostsFilterDTO } from '../dtos/get-posts-filter.dto';
+import { GetPostsDTO } from '../dtos/get-posts-filter.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Post } from '../post.entity';
 import { User } from '../../users/user.entity';

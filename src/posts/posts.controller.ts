@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 import { PostsService } from './providers/posts.service';
 import { CreatePostDTO } from './dtos/create-post.dto';
-import { GetPostsDTO, GetPostsFilterDTO } from './dtos/get-posts-filter.dto';
+import { GetPostsDTO } from './dtos/get-posts-filter.dto';
 import { UpdatePostStatusDTO } from './dtos/update-post-status.dto';
 import { Post as PostMessage } from './post.entity';
 import { GetUser } from 'src/users/get-user.decorator';
