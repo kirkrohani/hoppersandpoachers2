@@ -18,6 +18,7 @@ import { TagsService } from 'src/tags/providers/tags.service';
 import { UpdatePostStatusDTO } from '../dtos/update-post-status.dto';
 import { ERROR_MESSAGES } from 'src/utils/errors';
 import { Repository, Brackets } from 'typeorm';
+import { PaginationProvider } from 'src/common/pagination/providers/pagination.provider';
 
 @Injectable()
 export class PostsService {
@@ -39,6 +40,11 @@ export class PostsService {
      * Inject Tags Service
      */
     private tagsService: TagsService,
+
+    /**
+     * Inject Pagination Provider
+     */
+    private readonly paginationProvider: PaginationProvider,
   ) {}
 
   /**
@@ -80,10 +86,13 @@ export class PostsService {
    * @returns Post[]
    */
   async getPosts(postQuery: GetPostsDTO, user: User): Promise<Post[]> {
-    const posts = await this.postsRepository.find({
-      skip: (postQuery.page - 1) * postQuery.limit,
-      take: postQuery.limit,
-    });
+    const posts = await this.paginationProvider.paginateQuery(
+      {
+        limit: postQuery.limit,
+        page: postQuery.page,
+      },
+      this.postsRepository,
+    );
 
     return posts;
   }
