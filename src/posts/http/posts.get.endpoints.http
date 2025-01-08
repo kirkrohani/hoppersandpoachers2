@@ -6,4 +6,4 @@ GET  http://localhost:3000/posts/all
 ?status=ACTIVE
 &search=john%20doe
 &limit=1
-&page=3
+&page=2

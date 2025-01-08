@@ -19,6 +19,7 @@ import { GetUser } from 'src/users/get-user.decorator';
 import { User } from '../users/user.entity';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UpdatePostDTO } from './dtos/update-post.dto';
+import { Pagination } from 'src/common/pagination/interfaces/pagination.interface';
 
 @Controller('posts')
 @ApiTags('POSTS')
@@ -28,9 +29,7 @@ export class PostsController {
   constructor(private postsService: PostsService) {}
 
   @Get('/all')
-  getPosts(@Query() postQuery: GetPostsDTO): Promise<PostMessage[]> {
-    console.log('postQuery: ', postQuery);
-
+  getPosts(@Query() postQuery: GetPostsDTO): Promise<Pagination<PostMessage>> {
     return this.postsService.getPosts(postQuery, null);
   }
 

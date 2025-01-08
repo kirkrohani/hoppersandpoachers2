@@ -7,10 +7,10 @@ export interface Pagination<T> {
     totalPages: number;
   };
   links: {
-    firstPage: string;
-    lastPage: string;
-    currentPage: string;
-    nextPage: string;
-    previousPage: string;
+    first?: string;
+    previous?: string;
+    current: string;
+    next?: string;
+    last?: string;
   };
 }
