@@ -19,8 +19,7 @@ import { UpdatePostStatusDTO } from '../dtos/update-post-status.dto';
 import { ERROR_MESSAGES } from 'src/utils/errors';
 import { Repository, Brackets } from 'typeorm';
 import { PaginationProvider } from 'src/common/pagination/providers/pagination.provider';
-import { Pagination } from 'src/common/pagination/interfaces/pagination.interface';
-
+import { iPaginated } from 'src/common/pagination/interfaces/pagination.interface';
 @Injectable()
 export class PostsService {
   private logger = new Logger('PostsService', { timestamp: true });
@@ -89,7 +88,7 @@ export class PostsService {
   async getPosts(
     postQuery: GetPostsDTO,
     user: User,
-  ): Promise<Pagination<Post>> {
+  ): Promise<iPaginated<Post>> {
     const paginatedPosts = await this.paginationProvider.paginateQuery(
       {
         limit: postQuery.limit,

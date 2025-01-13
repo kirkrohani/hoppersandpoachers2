@@ -3,8 +3,7 @@ import { PaginationQueryDTO } from '../dtos/pagination-query.dto';
 import { ObjectLiteral, Repository } from 'typeorm';
 import { Request } from 'express';
 import { REQUEST } from '@nestjs/core';
-import { Pagination } from '../interfaces/pagination.interface';
-
+import { iPaginated } from '../interfaces/pagination.interface';
 @Injectable()
 export class PaginationProvider {
   constructor(
@@ -18,7 +17,7 @@ export class PaginationProvider {
   async paginateQuery<T extends ObjectLiteral>(
     paginationQuery: PaginationQueryDTO,
     repository: Repository<T>,
-  ): Promise<Pagination<T>> {
+  ): Promise<iPaginated<T>> {
     //query db
     const items = await repository.find({
       skip: (paginationQuery.page - 1) * paginationQuery.limit,
@@ -29,24 +28,22 @@ export class PaginationProvider {
       this.request.protocol + '://' + this.request.headers.host + '/';
     const newURL = new URL(this.request.url, baseURL);
 
-    console.log('baseUrl: ', baseURL, newURL);
-
     /**
      * calculate page numbers
      */
     const totalItems = await repository.count();
     const totalPages = Math.ceil(totalItems / paginationQuery.limit);
+
     const nextPage =
       paginationQuery.page === totalPages
         ? paginationQuery.page
         : paginationQuery.page + 1;
-
     const previousPage =
       paginationQuery.page === 1
         ? paginationQuery.page
         : paginationQuery.page - 11;
 
-    const paginationResponse: Pagination<T> = {
+    const paginationResponse: iPaginated<T> = {
       data: items,
       meta: {
         itemsPerPage: paginationQuery.limit,
