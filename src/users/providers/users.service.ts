@@ -16,10 +16,11 @@ import { AuthService } from 'src/auth/providers/auth.service';
 import { ConfigType } from '@nestjs/config';
 import profileConfig from '../config/profile.config';
 import { Repository, DataSource } from 'typeorm';
-import { UsersCreateMultpleProvider } from './users-create-multiple.provider';
+import { CreateMultipleUsersProvider } from './create-user-multiple.provider';
 import { UsersCreateMultipleDTO } from '../dtos/create-multiple-users.dto';
 import { string, number, any } from 'joi';
 import { async } from 'rxjs';
+import { CreateUserProvider } from './create-user.provider';
 
 /**
  * Users Service connects to users table and performs business services on users object
@@ -54,9 +55,14 @@ export class UsersService {
     private readonly dataSource: DataSource,
 
     /**
-     * Inject usersCreateManyProvider
+     * Inject createMultipleUserProvider
      */
-    private readonly usersCreateMultipleProvider: UsersCreateMultpleProvider,
+    private readonly createMultipleUserProvider: CreateMultipleUsersProvider,
+
+    /**
+     * Inject createUserProvider
+     */
+    private readonly createUserProvider: CreateUserProvider,
   ) {}
 
   /**
@@ -65,27 +71,7 @@ export class UsersService {
    * @returns Promise<void>
    */
   async createUser(createUserDto: CreateUserDTO): Promise<User> {
-    console.log('inside users service');
-    let existingUser = undefined;
-
-    // check if this user already exists in db
-    try {
-      existingUser = await this.usersRepository.findOne({
-        where: { username: createUserDto.username },
-      });
-      console.log('existing user: ', existingUser);
-    } catch (error) {
-      throw new RequestTimeoutException(ERROR_MESSAGES.UNABLE_TO_PROCESS, {
-        description: 'Error connecting to the database',
-      });
-    }
-    // if user exists throw an exception otherwise create user in db
-    if (existingUser) {
-      throw new ConflictException(ERROR_MESSAGES.DUPLICATE_USERNAME);
-    } else {
-      const user = this.usersRepository.create(createUserDto);
-      return await this.usersRepository.save(user);
-    }
+    return await this.createUserProvider.createUser(createUserDto);
   }
 
   /**
@@ -95,7 +81,7 @@ export class UsersService {
   async createMultipleUsers(
     createMultipleUsersDto: UsersCreateMultipleDTO,
   ): Promise<User[]> {
-    return await this.usersCreateMultipleProvider.createMultipleUsers(
+    return await this.createMultipleUserProvider.createMultipleUsers(
       createMultipleUsersDto,
     );
   }

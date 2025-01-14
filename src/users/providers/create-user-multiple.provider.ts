@@ -10,7 +10,7 @@ import { UsersCreateMultipleDTO } from '../dtos/create-multiple-users.dto';
 import { ERROR_MESSAGES } from 'src/utils/errors';
 
 @Injectable()
-export class UsersCreateMultpleProvider {
+export class CreateMultipleUsersProvider {
   constructor(
     /**
      * Inject Datasource

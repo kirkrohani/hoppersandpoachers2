@@ -6,7 +6,8 @@ import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from 'src/auth/auth.module';
 import profileConfig from './config/profile.config';
 import { User } from './user.entity';
-import { UsersCreateMultpleProvider } from './providers/users-create-multiple.provider';
+import { CreateMultipleUsersProvider } from './providers/create-user-multiple.provider';
+import { CreateUserProvider } from './providers/create-user.provider';
 
 @Module({
   imports: [
@@ -14,7 +15,7 @@ import { UsersCreateMultpleProvider } from './providers/users-create-multiple.pr
     TypeOrmModule.forFeature([User]),
     forwardRef(() => AuthModule),
   ],
-  providers: [UsersService, UsersCreateMultpleProvider],
+  providers: [UsersService, CreateMultipleUsersProvider, CreateUserProvider],
   controllers: [UsersController],
   exports: [UsersService],
 })
