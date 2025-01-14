@@ -8,6 +8,7 @@ export enum ERROR_MESSAGES {
   POST_NOT_FOUND = 'The Post Id does not exist',
   COULD_NOT_CONNECT_TO_DB = 'Could not connect to the database',
   TRANSACTION_FAILED = 'Rolling back transaction, could not complete all calls in the transaction',
+  USER_DOES_NOT_EXIST = 'This user does not exist',
 }
 
 export enum ERROR_CODES {

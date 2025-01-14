@@ -8,6 +8,7 @@ import profileConfig from './config/profile.config';
 import { User } from './user.entity';
 import { CreateMultipleUsersProvider } from './providers/create-user-multiple.provider';
 import { CreateUserProvider } from './providers/create-user.provider';
+import { FindUserProvider } from './providers/find-user.provider';
 
 @Module({
   imports: [
@@ -15,7 +16,12 @@ import { CreateUserProvider } from './providers/create-user.provider';
     TypeOrmModule.forFeature([User]),
     forwardRef(() => AuthModule),
   ],
-  providers: [UsersService, CreateMultipleUsersProvider, CreateUserProvider],
+  providers: [
+    UsersService,
+    CreateMultipleUsersProvider,
+    CreateUserProvider,
+    FindUserProvider,
+  ],
   controllers: [UsersController],
   exports: [UsersService],
 })

@@ -18,9 +18,8 @@ import profileConfig from '../config/profile.config';
 import { Repository, DataSource } from 'typeorm';
 import { CreateMultipleUsersProvider } from './create-user-multiple.provider';
 import { UsersCreateMultipleDTO } from '../dtos/create-multiple-users.dto';
-import { string, number, any } from 'joi';
-import { async } from 'rxjs';
 import { CreateUserProvider } from './create-user.provider';
+import { FindUserProvider } from './find-user.provider';
 
 /**
  * Users Service connects to users table and performs business services on users object
@@ -63,6 +62,11 @@ export class UsersService {
      * Inject createUserProvider
      */
     private readonly createUserProvider: CreateUserProvider,
+
+    /**
+     * Inject findUserProvider
+     */
+    private readonly findUserProvider: FindUserProvider,
   ) {}
 
   /**
@@ -151,5 +155,14 @@ export class UsersService {
         description: 'Error connecting to the database',
       });
     }
+  }
+
+  /**
+   * FIND ONE USER BY EMAIL - method which finds one specific user by their email from the database
+   * @param email
+   * @returns Promise<User>
+   */
+  async findOneByEmail(email: string): Promise<User> {
+    return await this.findUserProvider.findOneByEmail(email);
   }
 }
