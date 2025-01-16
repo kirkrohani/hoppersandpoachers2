@@ -1,6 +1,5 @@
-import { Inject, Injectable, forwardRef } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
-import { UsersService } from 'src/users/providers/users.service';
 import { SignInDTO } from '../dtos/signin.dto';
 import { SignInProvider } from './sign-in.provider';
 

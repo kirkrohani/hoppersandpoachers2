@@ -9,6 +9,7 @@ import { UsersService } from 'src/users/providers/users.service';
 import { SignInDTO } from '../dtos/signin.dto';
 import { HashingProvider } from './hashing.provider';
 import { ERROR_MESSAGES } from 'src/utils/errors';
+import { JwtTokenProvider } from './jwt-token.provider';
 
 @Injectable()
 export class SignInProvider {
@@ -22,6 +23,11 @@ export class SignInProvider {
      */
     @Inject(forwardRef(() => HashingProvider))
     private readonly hashingProvider: HashingProvider,
+
+    /**
+     * Inject JwtTokenProvider
+     */
+    private readonly jwtTokenProvider: JwtTokenProvider,
   ) {}
 
   /**
@@ -30,7 +36,7 @@ export class SignInProvider {
    * @param signInDto
    * @returns boolean
    */
-  public async signIn(signInDto: SignInDTO): Promise<boolean> {
+  public async signIn(signInDto: SignInDTO): Promise<{ accessToken: string }> {
     //find user using email id
     const user = await this.usersService.findOneByEmail(signInDto.email);
     const { password } = signInDto;
@@ -49,7 +55,9 @@ export class SignInProvider {
     if (!isAuthenticated) {
       throw new UnauthorizedException(ERROR_MESSAGES.PASSWORD_INCORRECT);
     }
-
-    return true;
+    const accessToken = await this.jwtTokenProvider.generateToken(user);
+    return {
+      accessToken: accessToken,
+    };
   }
 }
