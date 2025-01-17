@@ -3,6 +3,7 @@ import { ConfigType } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import jwtConfig from '../config/jwt.config';
 import { User } from 'src/users/user.entity';
+import { Request } from 'express';
 
 @Injectable()
 export class JwtTokenProvider {
@@ -35,5 +36,12 @@ export class JwtTokenProvider {
     );
 
     return accessToken;
+  }
+
+  validateToken(request: Request): string | undefined {
+    //first string is the bearer and the second is the token
+    const [bearer, token] = request.headers.authorization?.split(' ') ?? [];
+
+    return token;
   }
 }
