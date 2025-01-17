@@ -10,7 +10,6 @@ import {
   Post,
   Query,
   SetMetadata,
-  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './providers/users.service';
 import { CreateUserDTO } from './dtos/create-user.dto';
@@ -76,13 +75,6 @@ export class UsersController {
   ): Promise<User[]> {
     this.logger.verbose(`userSignUp for multiple users`);
     return this.usersService.createMultipleUsers(createMultipleUsersDto);
-  }
-
-  @Post('/signin')
-  async userSignIn(
-    @Body() userCreds: CreateUserDTO,
-  ): Promise<{ signedToken: string }> {
-    return await this.usersService.userSignIn(userCreds);
   }
 
   @Patch()

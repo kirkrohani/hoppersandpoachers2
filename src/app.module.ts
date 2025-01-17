@@ -17,6 +17,7 @@ import { UsersModule } from './users/users.module';
 import { PaginationModule } from './common/pagination/pagination.module';
 import { APP_GUARD } from '@nestjs/core';
 import { AccessTokenGuard } from './auth/guards/access-token/access-token.guard';
+import { AuthenticationGuard } from './auth/guards/authentication/authentication.guard';
 
 const ENV = process.env.STAGE;
 console.log('Environment: ', ENV);
@@ -55,8 +56,9 @@ console.log('Environment: ', ENV);
     AppService,
     {
       provide: APP_GUARD,
-      useClass: AccessTokenGuard,
+      useClass: AuthenticationGuard,
     },
+    AccessTokenGuard,
   ],
 })
 export class AppModule {}

@@ -7,7 +7,6 @@ import {
   Delete,
   Patch,
   Query,
-  UseGuards,
   Logger,
 } from '@nestjs/common';
 import { PostsService } from './providers/posts.service';

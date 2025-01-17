@@ -91,29 +91,6 @@ export class UsersService {
   }
 
   /**
-   *  USER SIGN IN - method to sign in / authenticate an existing user
-   * @param createUserDto
-   * @returns Promise<{ signedToken: string }>
-   */
-  async userSignIn(
-    createUserDto: CreateUserDTO,
-  ): Promise<{ signedToken: string }> {
-    const { username, password } = createUserDto;
-    const user: User = await this.usersRepository.findOne({
-      where: { username: username },
-    });
-
-    if (user) {
-      // const authTokenPayload: iJWTPayload = { username };
-      // const signedToken: string = await this.jwtService.sign(authTokenPayload);
-      // return { signedToken };
-      return null;
-    } else {
-      throw new UnauthorizedException(ERROR_MESSAGES.LOGIN_FAILED);
-    }
-  }
-
-  /**
    * FIND ALL USERS - method which returns and array of all users from database
    * @param getUserIdParamDto
    * @param limit
