@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import jwtConfig from '../config/jwt.config';
@@ -38,10 +38,25 @@ export class JwtTokenProvider {
     return accessToken;
   }
 
-  validateToken(request: Request): string | undefined {
-    //first string is the bearer and the second is the token
+  async validateToken(
+    request: Request,
+  ): Promise<{ valid: boolean; payload: string }> {
+    let payload = undefined;
     const [bearer, token] = request.headers.authorization?.split(' ') ?? [];
 
-    return token;
+    if (token) {
+      try {
+        payload = await this.jwtService.verifyAsync(
+          token,
+          this.jwtConfiguration,
+        );
+      } catch (error) {
+        throw new UnauthorizedException();
+      }
+    }
+    return {
+      valid: token ? true : false,
+      payload,
+    };
   }
 }

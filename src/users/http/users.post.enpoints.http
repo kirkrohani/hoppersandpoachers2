@@ -1,12 +1,13 @@
 POST http://localhost:3000/users/signup
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5MGE1MDY2ZC0wZGEzLTRjMjItYmEwMi1mNDg0MWI0N2FmYjEiLCJlbWFpbCI6ImpvaG5zYmFydHNAZ21haWwuY29tIiwiaWF0IjoxNzM3MDg4NTk0LCJleHAiOjE3MzcwOTIxOTQsImF1ZCI6ImxvY2FsaG9zdDozMDAwIiwiaXNzIjoibG9jYWxob3N0OjMwMDAifQ.-EueAI3NwmSDUhVGaFOVixDebUNLtZjz8awgIRMS6As
 
 {
   "firstname": "John",
-  "lastname": "Barts",
-  "username": "johnbarts",
-  "email": "johnsbarts@gmail.com",
-  "password": "Password123#"
+  "lastname": "Farts",
+  "username": "johnfarts",
+  "email": "johnsfarts@gmail.com",
+  "password": "Password1234#"
 }
 
 POST http://localhost:3000/users/signupMultiple

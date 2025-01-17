@@ -27,6 +27,6 @@ import { JwtTokenProvider } from './providers/jwt-token.provider';
     ConfigModule.forFeature(jwtConfig),
     JwtModule.registerAsync(jwtConfig.asProvider()),
   ],
-  exports: [AuthService, HashingProvider],
+  exports: [AuthService, HashingProvider, JwtTokenProvider],
 })
 export class AuthModule {}

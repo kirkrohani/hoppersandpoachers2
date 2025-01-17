@@ -1,6 +1,12 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
-import { Observable } from 'rxjs';
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
+
 import { JwtTokenProvider } from 'src/auth/providers/jwt-token.provider';
+import { REQUEST_USER_KEY } from 'src/utils/constants';
 
 @Injectable()
 export class AccessTokenGuard implements CanActivate {
@@ -11,11 +17,17 @@ export class AccessTokenGuard implements CanActivate {
     private readonly jwtTokenProvider: JwtTokenProvider,
   ) {}
 
-  canActivate(
-    context: ExecutionContext,
-  ): boolean | Promise<boolean> | Observable<boolean> {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    //Get the request object to pass to validateToken
     const request = context.switchToHttp().getRequest();
-    const token = this.jwtTokenProvider.validateToken(request);
+
+    //call validateToken to determine if valid and get the payload
+    const validatedToken = await this.jwtTokenProvider.validateToken(request);
+    if (!validatedToken || !validatedToken.valid) {
+      throw new UnauthorizedException();
+    }
+
+    request[REQUEST_USER_KEY] = validatedToken.payload;
 
     return true;
   }
