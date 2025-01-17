@@ -9,6 +9,7 @@ import {
   Patch,
   Post,
   Query,
+  SetMetadata,
   UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './providers/users.service';
@@ -19,6 +20,9 @@ import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { User } from './user.entity';
 import { UsersCreateMultipleDTO } from './dtos/create-multiple-users.dto';
 import { AccessTokenGuard } from 'src/auth/guards/access-token/access-token.guard';
+import { AUTH_TYPE } from 'src/utils/constants';
+import { AuthDecorator } from 'src/auth/decorators/auth.decorator';
+import { AuthType } from 'src/auth/enums/auth-type.enum';
 
 @Controller('users')
 @ApiTags('USERS')
@@ -59,8 +63,8 @@ export class UsersController {
     return this.usersService.findAll(getUserIdParamDto, limit, page);
   }
 
-  @UseGuards(AccessTokenGuard)
   @Post('/signup')
+  @AuthDecorator(AuthType.None)
   createUser(@Body() createUserDto: CreateUserDTO): Promise<User> {
     this.logger.verbose(`userSignUp for user ${JSON.stringify(createUserDto)}`);
     return this.usersService.createUser(createUserDto);
