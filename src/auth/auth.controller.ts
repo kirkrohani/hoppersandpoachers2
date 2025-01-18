@@ -6,7 +6,7 @@ import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
 import { Logger } from '@nestjs/common';
 @Controller('auth')
 export class AuthController {
-  private logger = new Logger('UsersController');
+  private logger = new Logger('AuthController');
 
   constructor(
     /*

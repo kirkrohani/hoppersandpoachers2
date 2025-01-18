@@ -4,6 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import jwtConfig from '../config/jwt.config';
 import { User } from 'src/users/user.entity';
 import { Request } from 'express';
+import { iActiveUser } from '../interfaces/active-user.interface';
 
 @Injectable()
 export class JwtTokenProvider {
@@ -26,7 +27,7 @@ export class JwtTokenProvider {
       {
         sub: user.id,
         email: user.email,
-      },
+      } as iActiveUser,
       {
         audience,
         issuer,

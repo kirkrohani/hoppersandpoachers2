@@ -19,6 +19,8 @@ import { User } from '../users/user.entity';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UpdatePostDTO } from './dtos/update-post.dto';
 import { iPaginated } from 'src/common/pagination/interfaces/pagination.interface';
+import { ActiveUser } from 'src/auth/decorators/active-user.decorator';
+import { iActiveUser } from 'src/auth/interfaces/active-user.interface';
 
 @Controller('posts')
 @ApiTags('POSTS')
@@ -61,8 +63,13 @@ export class PostsController {
     summary: 'create a new blog post',
   })
   @Post()
-  createPost(@Body() createPostDTO: CreatePostDTO): Promise<PostMessage> {
-    this.logger.verbose(' Posts Controller createPost() method. ');
+  createPost(
+    @Body() createPostDTO: CreatePostDTO,
+    @ActiveUser() user: iActiveUser,
+  ): Promise<PostMessage> {
+    this.logger.verbose(
+      `Posts Controller createPost() method w/User:  ${JSON.stringify(user)}`,
+    );
     return this.postsService.createPost(createPostDTO);
   }
 
