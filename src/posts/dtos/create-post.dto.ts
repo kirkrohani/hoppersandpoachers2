@@ -144,12 +144,4 @@ export class CreatePostDTO {
   @IsString()
   @IsOptional()
   parentId?: string;
-
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty({
-    type: 'uuid',
-    required: true,
-  })
-  authorId: string;
 }

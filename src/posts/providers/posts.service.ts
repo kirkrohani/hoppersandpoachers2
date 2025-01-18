@@ -20,31 +20,23 @@ import { ERROR_MESSAGES } from 'src/utils/errors';
 import { Repository, Brackets } from 'typeorm';
 import { PaginationProvider } from 'src/common/pagination/providers/pagination.provider';
 import { iPaginated } from 'src/common/pagination/interfaces/pagination.interface';
+import { CreatePostProvider } from './create-post.provider';
+import { iActiveUser } from 'src/auth/interfaces/active-user.interface';
 @Injectable()
 export class PostsService {
   private logger = new Logger('PostsService', { timestamp: true });
 
   constructor(
-    /**
-     * Inject PostsRepository
-     */
     @InjectRepository(Post)
     private readonly postsRepository: Repository<Post>,
 
-    /**
-     * Inject User Service
-     */
     private usersService: UsersService,
 
-    /**
-     * Inject Tags Service
-     */
     private tagsService: TagsService,
 
-    /**
-     * Inject Pagination Provider
-     */
     private readonly paginationProvider: PaginationProvider,
+
+    private readonly createPostProvider: CreatePostProvider,
   ) {}
 
   /**
@@ -54,30 +46,11 @@ export class PostsService {
    * @param user
    * @returns
    */
-  async createPost(createPostDto: CreatePostDTO): Promise<Post> {
-    //Find User obj from db
-    const author = await this.usersService.findOneById(createPostDto.authorId);
-
-    //Get all Tags objects from DB
-    const tags = await this.tagsService.findTags(createPostDto.tags);
-
-    const post = this.postsRepository.create({
-      ...createPostDto,
-      author: author,
-      tags: tags,
-    });
-
-    try {
-      this.logger.verbose('Saving Post to DB: ', post);
-      await this.postsRepository.save(post);
-      return post;
-    } catch (error) {
-      this.logger.error(
-        `Error in createPost() saving post to DB and create post data: ${JSON.stringify(createPostDto)}`,
-        error,
-      );
-      throw new InternalServerErrorException();
-    }
+  async createPost(
+    createPostDto: CreatePostDTO,
+    user: iActiveUser,
+  ): Promise<Post> {
+    return await this.createPostProvider.createPost(createPostDto, user);
   }
 
   /**

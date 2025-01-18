@@ -70,7 +70,7 @@ export class PostsController {
     this.logger.verbose(
       `Posts Controller createPost() method w/User:  ${JSON.stringify(user)}`,
     );
-    return this.postsService.createPost(createPostDTO);
+    return this.postsService.createPost(createPostDTO, user);
   }
 
   /**
