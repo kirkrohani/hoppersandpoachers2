@@ -10,6 +10,7 @@ export enum ERROR_MESSAGES {
   TRANSACTION_FAILED = 'Rolling back transaction, could not complete all calls in the transaction',
   USER_DOES_NOT_EXIST = 'This user does not exist',
   PASSWORD_INCORRECT = 'The password for this user is incorrect',
+  DUPLICATE_FIELD = 'There may be a duplicate field being entered into the database.',
 }
 
 export enum ERROR_CODES {

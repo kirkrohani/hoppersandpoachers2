@@ -2,7 +2,6 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
-  InternalServerErrorException,
   Logger,
 } from '@nestjs/common';
 import { CreatePostDTO } from '../dtos/create-post.dto';
@@ -12,8 +11,7 @@ import { TagsService } from 'src/tags/providers/tags.service';
 import { UsersService } from 'src/users/providers/users.service';
 import { Repository } from 'typeorm';
 import { iActiveUser } from 'src/auth/interfaces/active-user.interface';
-import { ERROR_CODES, ERROR_MESSAGES } from 'src/utils/errors';
-import { create } from 'domain';
+import { ERROR_MESSAGES } from 'src/utils/errors';
 
 @Injectable()
 export class CreatePostProvider {
@@ -47,9 +45,12 @@ export class CreatePostProvider {
     } catch (error) {
       throw new ConflictException(error);
     }
+
+    //Ensure that the tags passed in have already been created in DB
     if (createPostDto.tags?.length !== tags?.length) {
       throw new BadRequestException(ERROR_MESSAGES.TAGS_NOT_CORRECT);
     }
+
     const post = this.postsRepository.create({
       ...createPostDto,
       author: author,
@@ -65,7 +66,9 @@ export class CreatePostProvider {
         `Error in createPost() saving post to DB and create post data: ${JSON.stringify(createPostDto)}`,
         error,
       );
-      throw new ConflictException(error);
+      throw new ConflictException(error, {
+        description: ERROR_MESSAGES.DUPLICATE_FIELD,
+      });
     }
   }
 }

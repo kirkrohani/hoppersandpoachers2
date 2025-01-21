@@ -40,7 +40,6 @@ export class PostsService {
   ) {}
 
   /**
-   *
    * CREATE POST Method which creates new posts
    * @param createPostDto
    * @param user
