@@ -1,12 +1,13 @@
 POST http://localhost:3000/posts
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxNDZlZGVhZS0wZTUzLTQwZTgtYmY0Mi03ZjBjMDVjYjhhNTEiLCJlbWFpbCI6ImpvaG5zYmFydHNAZ21haWwuY29tIiwiaWF0IjoxNzM3NjkxODU1LCJleHAiOjE3Mzc2OTU0NTUsImF1ZCI6ImxvY2FsaG9zdDozMDAwIiwiaXNzIjoibG9jYWxob3N0OjMwMDAifQ.slEC6vuLwrgaxeGP_RDvjn6AnTuIODciLjMc2oh-4yM
 
 {
-  "title": "Learning NestJS is fun 3",
-  "description": "This is the description of my post 3",
+  "title": "Learning NestJS is fun 2",
+  "description": "This is the description of my post 2",
   "postType": "post",
-  "slug": "learning-nest-js-3",
-  "status": "ACTIVE",
+  "slug": "learning-nest-js-2",
+  "status": "DRAFT",
   "content": "post-content",
   "schema": "{\r\n    \"@context\": \"https:\/\/schema.org\",\r\n    \"@type\": \"Person\"\r\n  }",
   "featuredImageUrl": "http://localhost.com/images/image1.jpg",
@@ -15,5 +16,5 @@ Content-Type: application/json
     {
        "metaValue": "{ \"sidebarEnabled\": true, \"footerActive\": false }"
     },
-  "tags": ["237d9a53-842d-448d-999b-f1b2eb6eb0c6", "b694f4b5-f842-4731-b598-459a95adf452"]
+  "tags": ["8347dec3-2fa5-4067-b130-10572dd4d7aa", "d04c4f3a-bc33-468a-8794-5be295a0af71"]
 }

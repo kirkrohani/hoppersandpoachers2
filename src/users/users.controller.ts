@@ -18,7 +18,6 @@ import { UpdateUserDTO } from './dtos/update-user.dto';
 import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { User } from './user.entity';
 import { UsersCreateMultipleDTO } from './dtos/create-multiple-users.dto';
-import { AccessTokenGuard } from 'src/auth/guards/access-token/access-token.guard';
 import { AUTH_TYPE } from 'src/utils/constants';
 import { AuthDecorator } from 'src/auth/decorators/auth.decorator';
 import { AuthType } from 'src/auth/enums/auth-type.enum';

@@ -42,6 +42,7 @@ export class JwtTokenProvider {
   async validateToken(
     request: Request,
   ): Promise<{ valid: boolean; payload: string }> {
+    //extract the token from the request
     let payload = undefined;
     const [bearer, token] = request.headers.authorization?.split(' ') ?? [];
 
@@ -54,9 +55,11 @@ export class JwtTokenProvider {
       } catch (error) {
         throw new UnauthorizedException();
       }
+    } else {
+      throw new UnauthorizedException();
     }
     return {
-      valid: token ? true : false,
+      valid: payload ? true : false,
       payload,
     };
   }

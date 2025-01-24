@@ -1,8 +1,9 @@
 POST http://localhost:3000/tags
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxNDZlZGVhZS0wZTUzLTQwZTgtYmY0Mi03ZjBjMDVjYjhhNTEiLCJlbWFpbCI6ImpvaG5zYmFydHNAZ21haWwuY29tIiwiaWF0IjoxNzM3NjkxODU1LCJleHAiOjE3Mzc2OTU0NTUsImF1ZCI6ImxvY2FsaG9zdDozMDAwIiwiaXNzIjoibG9jYWxob3N0OjMwMDAifQ.slEC6vuLwrgaxeGP_RDvjn6AnTuIODciLjMc2oh-4yM
 
 {
-  "name": "typescript 3",
-  "slug": "typescript-3",
-  "description": "All posts typescript 3"
+  "name": "typescript 1",
+  "slug": "typescript-1",
+  "description": "All posts typescript 1"
 }

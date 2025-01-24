@@ -58,7 +58,7 @@ export class CreatePostProvider {
     });
 
     try {
-      this.logger.verbose(`Saving Post ${post.id} to Database`);
+      this.logger.verbose(`Saving Post ${createPostDto.title} to Database`);
       await this.postsRepository.save(post);
       return post;
     } catch (error) {
