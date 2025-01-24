@@ -1,4 +1,4 @@
-import { AuthDecorator } from './decorators/auth.decorator';
+import { Auth } from './decorators/auth.decorator';
 import { SignInDTO } from './dtos/signin.dto';
 import { AuthType } from './enums/auth-type.enum';
 import { AuthService } from './providers/auth.service';
@@ -17,7 +17,7 @@ export class AuthController {
 
   @Post('signin')
   @HttpCode(HttpStatus.OK)
-  @AuthDecorator(AuthType.None)
+  @Auth(AuthType.None)
   public async signIn(@Body() signInDto: SignInDTO) {
     this.logger.verbose(`user sign in for user ${JSON.stringify(signInDto)}`);
 

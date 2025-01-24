@@ -9,7 +9,6 @@ import {
   Patch,
   Post,
   Query,
-  SetMetadata,
 } from '@nestjs/common';
 import { UsersService } from './providers/users.service';
 import { CreateUserDTO } from './dtos/create-user.dto';
@@ -18,8 +17,7 @@ import { UpdateUserDTO } from './dtos/update-user.dto';
 import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { User } from './user.entity';
 import { UsersCreateMultipleDTO } from './dtos/create-multiple-users.dto';
-import { AUTH_TYPE } from 'src/utils/constants';
-import { AuthDecorator } from 'src/auth/decorators/auth.decorator';
+import { Auth } from 'src/auth/decorators/auth.decorator';
 import { AuthType } from 'src/auth/enums/auth-type.enum';
 
 @Controller('users')
@@ -62,7 +60,7 @@ export class UsersController {
   }
 
   @Post('/signup')
-  @AuthDecorator(AuthType.None)
+  @Auth(AuthType.None)
   createUser(@Body() createUserDto: CreateUserDTO): Promise<User> {
     this.logger.verbose(`userSignUp for user ${JSON.stringify(createUserDto)}`);
     return this.usersService.createUser(createUserDto);
