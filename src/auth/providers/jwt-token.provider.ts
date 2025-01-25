@@ -39,6 +39,23 @@ export class JwtTokenProvider {
     return accessToken;
   }
 
+  async signToken<T>(userId: string, expiresIn: number, payload?: T) {
+    const { audience, issuer, secret } = this.jwtConfiguration;
+
+    return await this.jwtService.signAsync(
+      {
+        sub: userId,
+        ...payload,
+      },
+      {
+        audience,
+        issuer,
+        secret,
+        expiresIn: expiresIn,
+      },
+    );
+  }
+
   async validateToken(
     request: Request,
   ): Promise<{ valid: boolean; payload: string }> {
