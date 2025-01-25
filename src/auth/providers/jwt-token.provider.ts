@@ -22,7 +22,7 @@ export class JwtTokenProvider {
   ) {}
 
   async generateToken(user: User): Promise<string> {
-    const { audience, issuer, secret, token_ttl } = this.jwtConfiguration;
+    const { audience, issuer, secret, accessTokenTtl } = this.jwtConfiguration;
     const accessToken = await this.jwtService.signAsync(
       {
         sub: user.id,
@@ -32,7 +32,7 @@ export class JwtTokenProvider {
         audience,
         issuer,
         secret,
-        expiresIn: token_ttl,
+        expiresIn: accessTokenTtl,
       },
     );
 

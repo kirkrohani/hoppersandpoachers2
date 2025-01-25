@@ -37,10 +37,10 @@ export class SignInProvider {
    * @returns boolean
    */
   public async signIn(signInDto: SignInDTO): Promise<{ accessToken: string }> {
-    //find user using email id
     const user = await this.usersService.findOneByEmail(signInDto.email);
     const { password } = signInDto;
     let isAuthenticated = false;
+
     try {
       isAuthenticated = await this.hashingProvider.comparePassword(
         password,
