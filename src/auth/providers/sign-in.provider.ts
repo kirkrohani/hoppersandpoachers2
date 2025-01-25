@@ -55,6 +55,7 @@ export class SignInProvider {
     if (!isAuthenticated) {
       throw new UnauthorizedException(ERROR_MESSAGES.PASSWORD_INCORRECT);
     }
+
     const accessToken = await this.jwtTokenProvider.generateToken(user);
     return {
       accessToken: accessToken,

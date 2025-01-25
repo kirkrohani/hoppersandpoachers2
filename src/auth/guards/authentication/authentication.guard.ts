@@ -36,7 +36,7 @@ export class AuthenticationGuard implements CanActivate {
    * This method uses reflection to get all the different methods and classes from the
    * execution context and then determines their auth types
    * Based on their auth type it executes the canActivate method per their type
-   * If even one auth type returns true in it's canActivate then it allows the reoute
+   * If even one auth type returns true in it's canActivate then it allows the route
    * @param context
    * @returns boolean
    */
@@ -47,8 +47,8 @@ export class AuthenticationGuard implements CanActivate {
     ]) ?? [AuthenticationGuard.defaultAuthType];
 
     const guards = authTypes.map((type) => this.authTypeGuardsMap[type]).flat();
-
     const error = new UnauthorizedException();
+
     for (const guard of guards) {
       const activationAllowed = await Promise.resolve(
         guard.canActivate(context),
@@ -57,7 +57,9 @@ export class AuthenticationGuard implements CanActivate {
       });
 
       if (activationAllowed) {
-        this.logger.verbose('Activation allow, Guard will allow route through');
+        this.logger.verbose(
+          'Activation allowed, Guard will allow route through',
+        );
         return true;
       }
     }

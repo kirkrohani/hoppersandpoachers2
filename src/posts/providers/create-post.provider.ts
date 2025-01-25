@@ -37,10 +37,7 @@ export class CreatePostProvider {
     let author = undefined;
     let tags = undefined;
     try {
-      //Find User obj from db
       author = await this.usersService.findOneById(user.sub);
-
-      //Get all Tags objects from DB
       tags = await this.tagsService.findTags(createPostDto.tags);
     } catch (error) {
       throw new ConflictException(error);

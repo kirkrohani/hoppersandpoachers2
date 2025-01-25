@@ -9,11 +9,11 @@ export class AuthService {
     /**
      * Inject SignInProvider
      */
-    private readonly singInProvider: SignInProvider,
+    private readonly signInProvider: SignInProvider,
   ) {}
 
   public async signIn(signInDto: SignInDTO) {
-    return await this.singInProvider.signIn(signInDto);
+    return await this.signInProvider.signIn(signInDto);
   }
 
   public isAuth() {
